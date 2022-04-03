@@ -35,7 +35,7 @@ async def update(item: dict):
         if conn:
             conn.close()   ## close the connection -- wraps each SQL call
 
-    return success, tuple
+    return {"success":success, "tuple":tuple}
 
 @app.get("/recommend")
 async def recommend():
