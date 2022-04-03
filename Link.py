@@ -6,13 +6,13 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 class DummyItem (BaseModel):
-    update: int
+    dummy: int
 
 app = FastAPI()
 
-@app.put("/ping/")
-async def update(item: DummyItem):
-    item.update({"response": "what's up"})
+@app.put("/ping")
+async def update(item: dict):
+    item.update({"response":"brih"})
     return item
 
 if __name__ == '__main__':
