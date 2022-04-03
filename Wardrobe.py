@@ -19,3 +19,6 @@ class Wardrobe:
 
     def getWardrobe(self):
         return self.items
+    
+    def __str__ (self):
+        return "\n".join(self.items)
