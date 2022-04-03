@@ -1,5 +1,6 @@
 ## RUN INSTALLATION python3 -m pip install fastapi uvicorn[standard]
 import psycopg2 as psqldb
+import psycopg2.extras
 import uvicorn
 from fastapi import FastAPI
 
@@ -24,7 +25,7 @@ async def update(item: dict):
                 password = PASS,
                 port = PORT) as conn:
 
-            with conn.cursor(cursor_factory=psqldb.extras.DictCursor) as curs:
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as curs:
                 query = "SELECT * FROM Wardrobe WHERE PIECEID = {}".format(primary_key)
                 curs.execute(query)
                 tuple = curs.fetchall()[0]
