@@ -1,46 +1,34 @@
 ## RUN INSTALLATION python3 -m pip install fastapi uvicorn[standard]
-import psycopg2 as psqldb
-import psycopg2.extras
 import uvicorn
 from fastapi import FastAPI
-
-HOSTNAME = 'localhost'
-DATABASE  = 'wavestyled'
-USER = 'postgres'
-PASS = 'cse115'
-PORT = 5432
+from pydantic import BaseModel
+import Wardrobe
 
 app = FastAPI()
 
+if __name__ == '__main__':
+    uvicorn.run(app, host='127.0.0.1', port=5001)
+    wardrobe = Wardrobe()
+
+class Row (BaseModel):
+    data : tuple
+
 @app.put("/ping")
 async def update(item: dict):
-    primary_key = item.get("PK")
-    tuple = None
-    success = 200
-    try: 
-        with psqldb.connect(
-                host = HOSTNAME,
-                dbname = DATABASE,
-                user = USER,
-                password = PASS,
-                port = PORT) as conn:
+    success = 200 if item else 404
+    new_item = wardrobe.addItem(item["data"])
+    return success
 
-            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as curs:
-                query = "SELECT * FROM Wardrobe WHERE PIECEID = {}".format(primary_key)
-                curs.execute(query)
-                tuple = curs.fetchall()[0]
-                conn.commit() ## save transactions into the database
-    except Exception as error:
-        success = 404
-    finally:
-        if conn:
-            conn.close()   ## close the connection -- wraps each SQL call
+@app.delete("/ping")
+async def delete_item(item: dict):
+    pass
 
-    return {"success":success, "tuple":tuple}
+@app.get("/wardrdrobepython")
+async def datastuf():
+    
+    return 
 
 @app.get("/recommend")
 async def recommend():
     pass
 
-if __name__ == '__main__':
-    uvicorn.run(app, host='127.0.0.1', port=5001)

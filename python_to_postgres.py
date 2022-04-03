@@ -34,6 +34,11 @@ try:
             curs.execute('SELECT * FROM Wardrobe')
             for item in curs.fetchall():
                 pass
+
+            query = f"SELECT * FROM Wardrobe WHERE PIECEID = {curs}"
+            curs.execute(query)
+            tup = dict(curs.fetchone())   ## want to then invoke the Recommender class object
+            conn.commit() ## save transactions into the database
             conn.commit() ## save transactions into the database
 except Exception as error:
     print(error)

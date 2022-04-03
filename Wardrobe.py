@@ -1,6 +1,21 @@
-import requests
+##########
+#
+# Represents a Wardrobe, which is a collection of Items
+#
+##########
+import Item
 
+class Wardrobe:
 
-if __name__ == '__main__':
-    response = requests.put('http://127.0.0.1:5001/ping/', json={'update': 1})
-    print(response.json())
+    def __init__ (self):
+        self.items = []
+
+    def addItem(self, clothing_item):
+        self.items.append(Item(clothing_item))
+    
+    def getItem(self, primary_key):
+        pks = [self.items.getPK() for _ in self.items]
+        return self.items[pks.index(primary_key)]
+
+    def getWardrobe(self):
+        return self.items
