@@ -14,7 +14,7 @@ app = FastAPI()
 @app.put("/ping")
 async def update(item: dict):
     primary_key = item.get("PK")
-
+    tuple = None
     success = 200
     try: 
         with psqldb.connect(
