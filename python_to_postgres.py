@@ -2,12 +2,10 @@
 import psycopg2 as psqldb
 
 HOSTNAME = 'localhost'
-DATABASE  = 'WaveStyled'
+DATABASE  = 'wavestyled'
 USER = 'postgres'
 PASS = 'cse115'
 PORT = 5432
-
-curs, conn = None, None
 
 try: 
     with psqldb.connect(   ## open the connection
@@ -17,7 +15,7 @@ try:
             password = PASS,
             port = PORT) as conn:
 
-        with conn.cursor(cursor_factory=psqldb.extras.DictCursor) as cur:
+        with conn.cursor(cursor_factory=psqldb.extras.DictCursor) as curs:
     
             # create_script = '''  '''
             # curs.execute(create_script)
