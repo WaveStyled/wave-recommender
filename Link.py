@@ -1,19 +1,20 @@
 import uvicorn
 from fastapi import FastAPI
+from typing import Optional
 from Wardrobe import Wardrobe
 from Recommender import Recommender
 import sys 
 
 app = FastAPI()
 
-@app.put("/ping/{userid}")
-async def update(userid: int, item: dict):
+@app.put("/ping/")
+async def update(item: dict, userid: Optional[int] = None):
     success = 200 if item else 404
     wardrobe.addItem(item.get("data"))
     #if model:
     #    model.update(item)
     # model.update(item)
-    return userid
+    return userid, item.get("data")
 
 @app.get("/recommend")
 async def recommend():
