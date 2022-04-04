@@ -3,9 +3,7 @@ from fastapi import FastAPI
 from Wardrobe import Wardrobe
 import sys 
 
-
 app = FastAPI()
-wardrobe = Wardrobe()
 
 @app.put("/ping")
 async def update(item: dict):
@@ -19,12 +17,14 @@ async def recommend():
 
 @app.get("/wardrobedata")
 async def getwardrobe():
-    return {"wardrobe": str(wardrobe.getItem(34))}
+    return str(wardrobe)
 
 @app.get("/kill")
 async def killServer():
     sys.stdout.write("Dead")
+    del wardrobe
     exit()
 
 if __name__ == '__main__':
+    wardrobe = Wardrobe()
     uvicorn.run(app, host='127.0.0.1', port=5001)

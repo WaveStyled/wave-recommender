@@ -21,6 +21,14 @@ class Wardrobe:
     def getWardrobe(self):
         return self.items
     
+    def filter(self, clothing_type, attribute="type"):
+        return list(filter(lambda item: item.getAttr(attribute) == clothing_type, self.items))
+            
     def __str__ (self):
         string_items = [str(i) for i in self.items]
         return "\n".join(string_items)
+    
+    def __del__ (self):
+        print("Wardrobe eliminated")
+
+    
