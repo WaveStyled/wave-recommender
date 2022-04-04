@@ -6,14 +6,14 @@ import sys
 
 app = FastAPI()
 
-@app.put("/ping")
-async def update(item: dict):
+@app.put("/ping/{userid}")
+async def update(userid: int, item: dict):
     success = 200 if item else 404
     wardrobe.addItem(item.get("data"))
     #if model:
     #    model.update(item)
     # model.update(item)
-    return success
+    return userid
 
 @app.get("/recommend")
 async def recommend():
