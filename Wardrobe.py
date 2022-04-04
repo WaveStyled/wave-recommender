@@ -26,7 +26,7 @@ class Wardrobe:
             
     def __str__ (self):
         string_items = [str(i) for i in self.items]
-        return "\n".join(string_items)
+        return "".join(string_items)
     
     def __del__ (self):
         print("Wardrobe eliminated")
