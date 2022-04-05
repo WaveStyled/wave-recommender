@@ -1,13 +1,14 @@
+from sre_constants import SUCCESS
 import uvicorn
 from fastapi import FastAPI
 from typing import Optional
 from Wardrobe import Wardrobe
 from Recommender import Recommender
-import sys 
+import signal
 
 app = FastAPI()
 
-@app.put("/ping/")
+@app.put("/add/")
 async def update(item: dict, userid: Optional[int] = None):
     success = 200 if item else 404
     wardrobe.addItem(item.get("data"))
@@ -15,6 +16,12 @@ async def update(item: dict, userid: Optional[int] = None):
     #    model.update(item)
     # model.update(item)
     return userid, item.get("data")
+
+@app.put("/delete/")
+async def delete(item: dict, userid: Optional[int] = None):
+    success = 200 if item else 404
+    #TODO: Logic for deleteing item
+    return userid
 
 @app.get("/recommend")
 async def recommend():
@@ -30,11 +37,12 @@ async def begin():
 async def getwardrobe():
     return str(wardrobe)
 
-@app.get("/kill")
+@app.get("/shutdown")
 async def killServer():
-    sys.stdout.write("Dead")
+    print("Node server has triggered shutdown")
     del wardrobe
-    exit()
+    signal.signal(signal.SIGINT)
+    return 1
 
 if __name__ == '__main__':
     wardrobe = Wardrobe()
