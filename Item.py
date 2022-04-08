@@ -24,16 +24,17 @@ class Item:
                             "we_snowy": 15,
                             "we_typical": 16,
                             "dirty": 17 }
+
     def __init__ (self, row_tuple):
         self.data = tuple(row_tuple)
 
-    def getAttr(self, attr):
+    def getAttr(self, attr : str):
         return self.data[Item.attribute_mappings.get(attr)]
 
-    def getPK(self):
+    def getPK(self) -> int:
         return self.data[0]
 
-    def getColorStr(self):
+    def getColorStr(self) -> str:
         return self.data[1]
 
     def getOCs(self):
