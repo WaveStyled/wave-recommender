@@ -15,7 +15,7 @@ class Wardrobe:
 
     def addItem(self, clothing_item : tuple): # index 4 is the type and its just checking the last letter
         self.dt.loc[self.dt.shape[0]] = clothing_item
-        
+    
     def getItem(self, primary_key : int) -> tuple:          
         return list(self.df.loc[self.df['pieceid'] == primary_key].to_records(index=False))[0]
     
@@ -26,8 +26,8 @@ class Wardrobe:
         ## del self.items[self.itemsself.getItem(primary_key, "pieceid")[0]
         self.num_items-=1
 
-    def getWardrobe(self):
-        return self.items
+    def getWardrobe(self) -> list(tuple):
+        return self.dt.to_records(index=False)
     
     def filter(self, sub_attr, attribute="type"):
         return list(filter(lambda item: item.getAttr(attribute) == sub_attr, self.items))
