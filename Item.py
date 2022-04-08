@@ -7,9 +7,7 @@
 
 class Item:
     attribute_mappings = {"pieceid": 0,
-                            "r_color": 1,
-                            "g_color": 2,
-                            "b_color": 3,
+                            "color": 1,
                             "type": 4,
                             "recent_date_worn": 5,
                             "times_worn": 6,
@@ -26,6 +24,26 @@ class Item:
                             "we_snowy": 17,
                             "we_avg_tmp": 18,
                             "dirty": 19}
+
+
+                            pieceID INT PRIMARY KEY, \
+        COLOR VARCHAR(12), \
+        TYPE VARCHAR(5), \
+        RECENT_DATE_WORN DATE, \
+        TIMES_WORN INT, \
+        RATING NUMERIC(3,2) DEFAULT 0.50, \
+        OC_FORMAL BOOLEAN, \
+        OC_SEMI_FORMAL BOOLEAN, \
+        OC_CASUAL BOOLEAN, \
+        OC_WORKOUT BOOLEAN, \
+        OC_OUTDOORS BOOLEAN, \
+        OC_COMFY BOOLEAN, \
+        WE_COLD BOOLEAN, \
+        WE_HOT BOOLEAN, \
+        WE_RAINY BOOLEAN, \
+        WE_SNOWY BOOLEAN, \
+        WE_AVG_TMP BOOLEAN, \
+        DIRTY BOOLEAN
 
     def __init__ (self, row_tuple):
         self.data = tuple(row_tuple)
