@@ -11,36 +11,26 @@ data = pd.read_csv('./good_matts_wardrobe.csv')
 url = "http://localhost:5000/add"
 
 
-
-def post_csv():
-
-	for row in data.itertuples(index=False):
-		myobj = {'COLOR': row.color,
-				'TYPE': row.type,
-				'PIECEID': row.pieceid,
-				'OC_SEMI_FORMAL': row._4,
-				'OC_FORMAL': row.formal,
-				'OC_CASUAL': row.casual,
-				'OC_WORKOUT': row.workout,
-				'OC_OUTDOORS': row.outdoors,
-				'OC_COMFY': row.comfy,
-				'WE_HOT': row.hot,
-				'WE_COLD': row.cold,
-				'WE_RAINY': row.rainy,
-				'WE_SNOWY': row.snowy,
-				'WE_AVERAGE': row.typical
-								}
-		r = requests.post(url,json=myobj)
-
-['pieceid', "color", "type", "recent_date_worn", "times_worn", "rating", 
-                                        "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
-                                        "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"]
+def post_csv(w):
+    for row in data.itertuples(index=False):
+        d = list(row)
+        d.insert(3, None)
+        d.insert(4, 1)
+        d.insert(5, 0.5)
+        d.append(0)
+        # print(d)
+        w.addItem(d)
+                #w.addItem(row)
+		# r = requests.post(url,json=myobj)
+    return w
 
 w = Wardrobe()
-input = [1, "red", "BRUH", None, 2, 0.5, 0, 1, 1, 1, 1, 2, 3, 4, 2, 1, 1, 1]
-w.addItem(input)
-x = w.getWardrobe()
-print(x)
+post_csv(w)
+print(w.getdf())
+
+
+fit = w.gen_random("casual", "hot")
+print(fit)
 
 # post_csv()
 

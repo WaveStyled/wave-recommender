@@ -10,9 +10,9 @@ from random import randint
 class Wardrobe:
 
     def __init__ (self):
-        self.dt = pd.DataFrame(columns=['pieceid', "color", "type", "recent_date_worn", "times_worn", "rating", 
-                                        "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
-                                        "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
+        self.dt = pd.DataFrame(columns= ['pieceid', "type", "color", "recent_date_worn", "times_worn", "rating", 
+            "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
+            "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
     
     def from_csv(self, path):
         self.dt = pd.read_csv(path)
@@ -20,14 +20,15 @@ class Wardrobe:
     def addItem(self, clothing_item): # index 4 is the type and its just checking the last letter
         self.dt.loc[self.dt.shape[0]] = clothing_item
     
-    def getItem(self, primary_key):          
-        return self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=False)[0]
+    def getItem(self, primary_key):     
+        item = self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=False)  
+        return item[0] if item else None
     
     def getItemObj(self, primary_key):
         return Item(self.getItem(primary_key))
 
     def deleteItem(self, primary_key):
-        self.dt.drop([primary_key], axis=0)
+        self.dt.drop([primary_key-1], axis=0, inplace=True)
 
     def getWardrobe(self):
         return self.dt.to_records(index=False)
@@ -39,13 +40,13 @@ class Wardrobe:
         return self.dt
 
     def gen(self, occasion,weather, ends):
-        x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt[occasion] == 1) & (self.dt[weather] == 1) ]
+        x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt["oc_"+occasion] == 1) & (self.dt["we_"+weather] == 1) ]
         if(len(x.index)==0):
             return -1
         chosen = x.sample()
         return int(chosen["pieceid"])
 
-    def gen_random(self, occasion,weather):
+    def gen_random(self, occasion, weather):
         top = ""
         shorts = ""
         shoes = ""
