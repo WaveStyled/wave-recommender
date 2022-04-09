@@ -5,6 +5,7 @@ from random import randint
 import pandas as pd
 #from Wardrobe import Wardrobe
 import itertools
+from Wardrobe import Wardrobe
 #from PIL import Image
 data = pd.read_csv('./good_matts_wardrobe.csv') 
 url = "http://localhost:5000/add"
@@ -31,10 +32,17 @@ def post_csv():
 								}
 		r = requests.post(url,json=myobj)
 
-post_csv()
+['pieceid', "color", "type", "recent_date_worn", "times_worn", "rating", 
+                                        "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
+                                        "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"]
 
+w = Wardrobe()
+input = [1, "red", "BRUH", None, 2, 0.5, 0, 1, 1, 1, 1, 2, 3, 4, 2, 1, 1, 1]
+w.addItem(input)
+x = w.getWardrobe()
+print(x)
 
+# post_csv()
 
-
-response = requests.get(url="http://localhost:5001/wardrobedata")
-print(response.text)
+# response = requests.get(url="http://localhost:5001/wardrobedata")
+# print(response.text)

@@ -11,17 +11,17 @@ class Wardrobe:
 
     def __init__ (self):
         self.dt = pd.DataFrame(columns=['pieceid', "color", "type", "recent_date_worn", "times_worn", "rating", 
-            "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
-            "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
+                                        "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
+                                        "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
     
     def from_csv(self, path):
-        self.dt.read_csv(path)
+        self.dt = pd.read_csv(path)
     
     def addItem(self, clothing_item): # index 4 is the type and its just checking the last letter
         self.dt.loc[self.dt.shape[0]] = clothing_item
     
     def getItem(self, primary_key):          
-        return list(self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=False))[0]
+        return self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=False)[0]
     
     def getItemObj(self, primary_key):
         return Item(self.getItem(primary_key))
