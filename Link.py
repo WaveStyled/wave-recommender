@@ -3,18 +3,17 @@ import uvicorn
 import sys
 from fastapi import FastAPI
 from typing import Optional
-# from Wardrobe import Wardrobe
+from Wardrobe import Wardrobe
 # from Item import Item
 # from Recommender import Recommender
 
 app = FastAPI()
-global wardrobe
-#wardrobe = Wardrobe()
+wardrobe = Wardrobe()
 
 @app.put("/add")
 async def update(item: dict, userid: Optional[int] = None):
     success = 200 if item else 404
-    #wardrobe.addItem(item.get("data"))
+    wardrobe.addItem(item.get("data"))
     #if model:
     #    model.update(item)
     # model.update(item)
@@ -38,7 +37,7 @@ async def begin():
 
 @app.get("/wardrobedata")
 async def getwardrobe():
-    return wardrobe.getItem(42)
+    return {"data": wardrobe.getWardrobe()}
 
 @app.get("/end")
 async def killServer():
