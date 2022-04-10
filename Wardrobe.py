@@ -146,6 +146,25 @@ class Wardrobe:
             fit[3] = jacket
         return fit
 
+
+    def getRandomFit(self, num_fits=1):
+        occasions = ["formal","semi-formal","casual","workout","outdoors","comfy"]
+        weather = ["hot","cold","rainy","snowy","typical"]
+        fits = []
+        oc_we = []
+        for x in range(0,num_fits,1):
+            oc = occasions[randint(0,len(occasions)-1)]
+            we = weather[randint(0,len(weather)-1)]
+            fit = self.gen_random(oc,we)
+            
+            if -1 not in fit:
+                fits.append(fit)
+                oc_we.append([oc,we])
+        
+        #fits.sort()
+        #list(fits for fits,_ in itertools.groupby(fits))
+        return [fits,oc_we]
+
     def __getitem__ (self, clothing_type):  ## allows for [] notation with the object
         return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records()
 
