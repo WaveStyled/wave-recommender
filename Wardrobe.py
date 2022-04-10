@@ -150,8 +150,7 @@ class Wardrobe:
         return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records()
 
     def __str__ (self):
-        string_items = [str(i) for i in self.items]
-        return "".join(string_items)
+        return str(self.dt)
 
     def __del__ (self):
         print("Wardrobe eliminated")

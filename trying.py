@@ -25,14 +25,14 @@ def post_csv(w):
     return w
 
 w = Wardrobe()
-post_csv(w)
-print(w.getdf())
+# post_csv(w)
+# print(w.getdf())
 
 
-fit = w.gen_random("casual", "hot")
-print(fit)
+# fit = w.gen_random("casual", "hot")
+# print(fit)
 
 # post_csv()
 
-# response = requests.get(url="http://localhost:5001/wardrobedata")
-# print(response.text)
+response = requests.get(url="http://localhost:5001/wardrobedata")
+print(response.text)

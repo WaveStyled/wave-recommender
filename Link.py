@@ -15,12 +15,10 @@ async def update(item: dict, userid: Optional[int] = None):
     success = 200 if item else 404
     
     wardrobe.addItem(item.get("data"))
-    z = item.get("data")[0]
-    y = wardrobe.getWardrobe()
     #if model:
     #    model.update(item)
     # model.update(item)
-    return {"data": item.get("data"), "stuff": y}
+    return {"data": item.get("data")}
 
 @app.put("/delete/")
 async def delete(item: dict, userid: Optional[int] = None):
@@ -40,7 +38,7 @@ async def begin():
 
 @app.get("/wardrobedata")
 async def getwardrobe():
-    return {"data": wardrobe.getWardrobe()}
+    return {"data": str(wardrobe)}
 
 @app.get("/end")
 async def killServer():
