@@ -1,4 +1,4 @@
-pieceid,type,color,formal,semi-formal,casual,workout,outdoors,comfy,cold,hot,rainy,snowy,typical
+pieceid,type,color,oc_formal,oc_semi_formal,oc_casual,oc_workout,oc_outdoors,oc_comfy,we_cold,we_hot,we_rainy,we_snowy,we_typical
 1,STES,brown,0,0,1,0,1,0,1,1,1,0,1
 2,STES,light_blue,0,1,1,0,1,0,1,1,1,0,1
 3,STES,light_blue,0,1,1,0,1,1,1,1,1,0,1

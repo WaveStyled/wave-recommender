@@ -6,6 +6,8 @@
 from Item import Item
 import pandas as pd
 from random import randint
+# import cv2 as cv
+# import numpy as np
 
 class Wardrobe:
 
@@ -39,9 +41,9 @@ class Wardrobe:
     def getdf(self):
         return self.dt
 
-    def gen(self, occasion,weather, ends):
+    def gen(self, occasion, weather, ends):
         x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt["oc_"+occasion] == 1) & (self.dt["we_"+weather] == 1) ]
-        if(len(x.index)==0):
+        if (len(x.index)==0):
             return -1
         chosen = x.sample()
         return int(chosen["pieceid"])
@@ -81,7 +83,6 @@ class Wardrobe:
             fit[4] = bot
             shoes = self.gen(occasion,weather,"O")
             fit[5] = shoes
-            return fit
         elif (weather == "rainy"):
             
             hat_chance = randint(1,2)
@@ -103,7 +104,6 @@ class Wardrobe:
             fit[5] = shoes
             jacket = self.gen(occasion, weather,"C")
             fit[3] = jacket
-            return fit
         elif (weather == "typical"):
             shirt_or_sweat = randint(1,2)
             if(shirt_or_sweat == 1):
@@ -129,7 +129,6 @@ class Wardrobe:
                 fit[0] = hat
             shoes = self.gen(occasion,weather,"O")
             fit[5] = shoes
-            return fit
         elif (weather == "snowy"):
             hat_chance = randint(1,2)
             if(hat_chance == 1):
@@ -146,13 +145,12 @@ class Wardrobe:
             fit[3] = jacket
         return fit
 
-
     def getRandomFit(self, num_fits=1):
-        occasions = ["formal","semi-formal","casual","workout","outdoors","comfy"]
+        occasions = ["formal","semi_formal","casual","workout","outdoors","comfy"]
         weather = ["hot","cold","rainy","snowy","typical"]
         fits = []
         oc_we = []
-        for x in range(0,num_fits,1):
+        for _ in range(0,num_fits,1):
             oc = occasions[randint(0,len(occasions)-1)]
             we = weather[randint(0,len(weather)-1)]
             fit = self.gen_random(oc,we)
@@ -164,6 +162,12 @@ class Wardrobe:
         #fits.sort()
         #list(fits for fits,_ in itertools.groupby(fits))
         return [fits,oc_we]
+
+    def displayFit(self, outfit):
+        for im in outfit:
+            if im:
+                pass
+
 
     def __getitem__ (self, clothing_type):  ## allows for [] notation with the object
         return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records()
