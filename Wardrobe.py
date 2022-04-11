@@ -6,8 +6,8 @@
 from Item import Item
 import pandas as pd
 from random import randint
-# import cv2 as cv
-# import numpy as np
+import cv2 as cv
+import numpy as np
 
 class Wardrobe:
 
@@ -163,10 +163,35 @@ class Wardrobe:
         #list(fits for fits,_ in itertools.groupby(fits))
         return [fits,oc_we]
 
-    def displayFit(self, outfit):
+    def displayFit(self, outfit, conditions, path):
+        ratings = []
+        i = 0
         for im in outfit:
             if im:
-                pass
+                images = []
+                overall_shape = None
+                for item in im:
+                    if item:
+                        image = cv.imread(f'{path}/{item}.jpeg')
+                        image = cv.resize(image, (0, 0), None, .20, .20)
+                        if not overall_shape:
+                            overall_shape = image.shape
+                        elif image.shape != overall_shape:
+                            image = cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
+                        images.append(image)
+                ims = np.hstack((images[0], images[1]))
+                for rest in images[2:]:
+                    ims = np.hstack((ims,rest))
+                cv.imshow(f'outfit: {str(im)}, attr: {str(conditions[i])}', ims)
+                while True:
+                    like_dislike = cv.waitKey(0) & 0xFF - 48
+                    if not like_dislike or like_dislike == 1:
+                        break
+                ratings.append(like_dislike)
+                # cv.destroyAllWindows()  if you want to remove window on key press
+        i +=1
+        cv.destroyAllWindows()
+        return ratings
 
 
     def __getitem__ (self, clothing_type):  ## allows for [] notation with the object

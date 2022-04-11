@@ -9,10 +9,10 @@ from Wardrobe import Wardrobe
 def main():
     w = Wardrobe()
     w.from_csv('./good_matts_wardrobe.csv')
-    fit, attr = w.getRandomFit()
+    fit, attr = w.getRandomFit(3)
     out = [(f, a) for f, a in zip(fit, attr)]
-    w.displayFit(fit[0])
-    print(w)
+    ratings = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
+    print(ratings)
     
 
 if __name__ == '__main__':
