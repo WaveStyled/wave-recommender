@@ -173,7 +173,7 @@ class Wardrobe:
                 for item in im:
                     if item:
                         image = cv.imread(f'{path}/{item}.jpeg')
-                        image = cv.resize(image, (0, 0), None, .20, .20)
+                        image = cv.resize(image, (0, 0), None, .1, .1)
                         if not overall_shape:
                             overall_shape = image.shape
                         elif image.shape != overall_shape:
@@ -188,7 +188,7 @@ class Wardrobe:
                     if not like_dislike or like_dislike == 1:
                         break
                 ratings.append(like_dislike)
-                # cv.destroyAllWindows()  if you want to remove window on key press
+                cv.destroyAllWindows()  # if you want to remove window on key press
         i +=1
         cv.destroyAllWindows()
         return ratings
