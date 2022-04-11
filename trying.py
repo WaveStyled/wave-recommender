@@ -6,6 +6,9 @@ import pandas as pd
 from Wardrobe import Wardrobe
 #from PIL import Image
 
+
+## INSTALLATION python3 -m pip install opencv-python
+
 def main():
     w = Wardrobe()
     w.from_csv('./good_matts_wardrobe.csv')
