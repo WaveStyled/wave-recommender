@@ -220,9 +220,9 @@ class Wardrobe:
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
                                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+
                         for i in range(len(outfits)):
-                            inputs = tuple([pk] + outfits[i] + 
-                                    [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])])
+                            inputs = [pk] + outfits[i] + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
                             curs.execute(insert_script, inputs)
                             pk+=1
                         conn.commit() ## save transactions into the database

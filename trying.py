@@ -10,7 +10,8 @@ def main():
     fit, attr = w.getRandomFit(10)
     ratings = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
     #print(fit)
-    w.outfitToDB(fit, attr, ratings)
+    #print(ratings, attr)
+    w.outfitToDB(outfits=fit, ratings=ratings, attrs=attr)
 
 '''
     t = []
