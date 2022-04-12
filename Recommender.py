@@ -1,21 +1,38 @@
 import numpy as np
 import pandas as pd
 from Wardrobe import Wardrobe
-import tensorflow as tf
+# import tensorflow as tf
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, Activation
-from tensorflow.keras.optimizers import SGD
-from tensorflow.keras.callbacks import Callback
+#from tensorflow.keras.models import Model, Sequential
+#from tensorflow.keras.layers import Dense, Input, Activation
+# from tensorflow.keras.optimizers import SGD
+#from tensorflow.keras.callbacks import Callback
 
 
-class Recommender():
+class Recommender(Wardrobe):
 
-    def __init__ (self, wardrobe):
-        self.dt = pd.DataFrame(columns=['outfit_id' | 'hat' | 'shirt' | 'sweater' | 'jacket' | 'bottom_layer' | 'shoes' | 'misc' | 'times_worn' | 'recent_date_worn' | 'fit_score' | 'occasion' | 'weather' | 'liked' ])
+    colors = {}
+
+    def __init__ (self):
+        super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
+                'shoes','misc','times_worn','recent_date_worn','fit_score','occasion','weather','liked'])
+
+    def normalize(self, col=['hat','shirt','sweater','jacket','bottom_layer','shoes','misc']):
+        for c in col:
+            self.dt[c] = self.dt[c] / self.dt[c].abs().max()
+            self.dt[c].fillna(0, inplace=True)
+
+    def getdf(self):
+        return self.dt
+
+    def revert(self):
+        pass
+    
+    def copy(self):
+        return self.dt.copy()
 
     def train(self, train):
         pass
@@ -39,9 +56,6 @@ class Recommender():
     def buildModel(self, input):
         pass
 
-    def getwd(self):
-        return self.wardrobe
-
 
 def enumerate_colors(colors):
   filtered_list = list(filter(lambda ele:ele is not None, colors))
@@ -54,8 +68,20 @@ def add_color_to_mapping(mapping, color):
     mapping[color] = val
 
 
-#tf.debugging.set_log_device_placement(True)
 
+def main():
+    r = Recommender()
+    r.from_csv('./outfits.csv')
+    print(r)
+    r.normalize()
+    print(r.getdf().head())
+
+if __name__ == '__main__':
+    main()
+
+
+#tf.debugging.set_log_device_placement(True)
+'''
 def build_model2(): 
   model = Sequential() 
   model.add(Dense(units = 8, input_dim=2, activation='tanh'))
@@ -79,17 +105,7 @@ history = model.fit(x,
                     validation_split=0.2,
                     )
 
-
-def main():
-    r = Recomennder()
-    r.from_csv('./outfits.csv')
-    print(w)
-
-
-
-if __name__ == '__main__':
-
-
+'''
 
 ## IDEAS:
 # the model algorithm is the same, but the occasion/weather can be treated as bias terms

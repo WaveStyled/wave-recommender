@@ -15,10 +15,11 @@ class Wardrobe:
     oc_mappings = {"oc_formal": 1, "oc_semi_formal": 2, "oc_casual": 3, "oc_workout": 4, "oc_outdoors": 5, "oc_comfy": 6}
     we_mappings = {"we_cold": 1, "we_hot": 2, "we_rainy": 3, "we_snowy": 4, "we_typical": 5}
 
-    def __init__ (self):
-        self.dt = pd.DataFrame(columns=['pieceid', "type", "color", "recent_date_worn", "times_worn", 
+    def __init__ (self, cols=['pieceid', "type", "color", "recent_date_worn", "times_worn", 
             "rating", "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
-            "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
+            "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"]
+                    ):
+        self.dt = pd.DataFrame(columns=cols)
     
     def from_csv(self, path):
         self.dt = pd.read_csv(path)
