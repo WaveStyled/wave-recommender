@@ -198,12 +198,12 @@ class Wardrobe:
                         break
                     if like_dislike == 65:
                         cv.destroyAllWindows()
-                        return ratings
+                        return ratings, outfit[:i], conditions[:i]
                 ratings.append(like_dislike)
                 cv.destroyAllWindows()  # if you want to remove window on key press
             i +=1
         cv.destroyAllWindows()
-        return ratings
+        return ratings, outfit, conditions
 
     def outfitToDB(self, outfits, ratings, attrs, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         if len(outfits) == len(ratings) == len(attrs):
