@@ -8,12 +8,13 @@ import pandas as pd
 from random import randint
 import cv2 as cv
 import numpy as np
+import psycopg2 as psqldb
 
 class Wardrobe:
 
     def __init__ (self):
-        self.dt = pd.DataFrame(columns= ['pieceid', "type", "color", "recent_date_worn", "times_worn", "rating", 
-            "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
+        self.dt = pd.DataFrame(columns=['pieceid', "type", "color", "recent_date_worn", "times_worn", 
+            "rating", "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
             "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"])
     
     def from_csv(self, path):
@@ -36,7 +37,7 @@ class Wardrobe:
         return self.dt.to_records(index=False)
     
     def filter(self, sub_attr, attribute="type"):
-        return self.dt.loc[self.dt[attribute] == sub_attr].to_records()
+        return self.dt.loc[self.dt[attribute] == sub_attr].to_records(index=False)
     
     def getdf(self):
         return self.dt
@@ -197,9 +198,37 @@ class Wardrobe:
         cv.destroyAllWindows()
         return ratings
 
+    def outfitToDB(self, outfits, ratings, attrs, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+        if not (len(outfits) == len(ratings) == len(attrs)):
+            try: 
+                with psqldb.connect(
+                        host = HOSTNAME,
+                        dbname = DATABASE,
+                        user = USER,
+                        password = PASS,
+                        port = PORT) as conn:
+
+                    with conn.cursor(cursor_factory=psqldb.extras.DictCursor) as curs:
+                        
+                        
+                        
+                        ### insert
+                        # insert_script = 'INSERT INTO .....'
+                        # insert_values = [(1,2,3,4,4)]
+                        # for iv in insert_values:
+                        #    curs.execute(insert_script, iv)
+
+                        conn.commit() ## save transactions into the database
+            except Exception as error:
+                print(error)
+            finally:
+                if conn:
+                    conn.close()   ## close the connection -- wraps each SQL call
+
+
 
     def __getitem__ (self, clothing_type):  ## allows for [] notation with the object
-        return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records()
+        return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records(index=False)
 
     def __str__ (self):
         return str(self.dt)

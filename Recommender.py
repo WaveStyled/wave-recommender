@@ -1,18 +1,21 @@
-#import numpy as np
-#import pandas as pd
+import numpy as np
+import pandas as pd
+from Wardrobe import Wardrobe
+# import matplotlib.pyplot as plt
+# import seaborn as sns
+import tensorflow as tf
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Activation, BatchNormalization
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
 
 
 class Recommender():
-    
-    # model = Convoutional2D
-    # color model, outfit model
-
-    # should there be a model for each type nad 
 
     def __init__ (self, wardrobe):
         self.wardrobe = wardrobe
+        model = Sequential()
 
-    def train(self):
+    def train(self, train):
         pass
 
     def update_weights(self):
@@ -30,6 +33,19 @@ class Recommender():
     
     def generate_outfit(self, occasion, weather):
         pass
+
+    def buildModel(self, input):
+        pass
+
+    def getwd(self):
+        return self.wardrobe
+
+
+if __name__ == '__main__':
+    w = Wardrobe()
+    w.from_csv('./good_matts_wardrobe.csv')
+    r = Recommender(w)
+    print(r.getwd())
 
 
 
