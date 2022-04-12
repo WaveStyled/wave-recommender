@@ -155,8 +155,10 @@ class Wardrobe:
         fits = []
         oc_we = []
         for _ in range(0,num_fits,1):
-            oc = occasions[randint(0,len(occasions)-1)]
-            we = weather[randint(0,len(weather)-1)]
+            rand_oc = np.random.choice(np.arange(6), p = [0.05, 0.07, 0.5, 0.15, 0.13, 0.1])
+            rand_we = np.random.choice(np.arange(5), p = [0.3, 0.25, 0.1, 0.03, 0.32])
+            oc = occasions[rand_oc]
+            we = weather[rand_we]
             fit = self.gen_random(oc,we)
             
             if -1 not in fit:
