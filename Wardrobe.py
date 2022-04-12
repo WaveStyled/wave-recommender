@@ -154,9 +154,11 @@ class Wardrobe:
         weather = ["we_hot","we_cold","we_rainy","we_snowy","we_typical"]
         fits = []
         oc_we = []
+        oc_ind = np.arange(6)
+        we_ind = np.arange(5)
         for _ in range(0,num_fits,1):
-            rand_oc = np.random.choice(np.arange(6), p = [0.05, 0.07, 0.5, 0.15, 0.13, 0.1])
-            rand_we = np.random.choice(np.arange(5), p = [0.3, 0.25, 0.1, 0.03, 0.32])
+            rand_oc = np.random.choice(oc_ind, p = [0.05, 0.07, 0.5, 0.15, 0.13, 0.1])
+            rand_we = np.random.choice(we_ind, p = [0.3, 0.25, 0.1, 0.03, 0.32])
             oc = occasions[rand_oc]
             we = weather[rand_we]
             fit = self.gen_random(oc,we)
