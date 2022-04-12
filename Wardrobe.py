@@ -185,8 +185,12 @@ class Wardrobe:
                 cv.imshow(f'outfit: {str(im)}, attr: {str(conditions[i])}', ims)
                 while True:
                     like_dislike = cv.waitKey(0) & 0xFF - 48
+                    print(like_dislike)
                     if not like_dislike or like_dislike == 1:
                         break
+                    if like_dislike == 65:
+                        cv.destroyAllWindows()
+                        return ratings
                 ratings.append(like_dislike)
                 cv.destroyAllWindows()  # if you want to remove window on key press
         i +=1
