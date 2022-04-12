@@ -204,5 +204,8 @@ class Wardrobe:
     def __str__ (self):
         return str(self.dt)
 
+    def __len__ (self):
+        return len(self.dt)
+
     def __del__ (self):
         print("Wardrobe eliminated")
