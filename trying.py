@@ -7,10 +7,10 @@ from Wardrobe import Wardrobe
 def main():
     w = Wardrobe()
     w.from_csv('./good_matts_wardrobe.csv')
-    fit, attr = w.getRandomFit(2)
-
-    print(fit)
-    w.outfitToDB(outfits = [[1,0,0,2,0,67,0]], attrs = [["oc_formal","we_snowy"]], ratings = [1])
+    fit, attr = w.getRandomFit(10)
+    ratings = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
+    #print(fit)
+    w.outfitToDB(fit, attr, ratings)
 
 '''
     t = []
