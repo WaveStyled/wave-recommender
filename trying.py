@@ -7,7 +7,7 @@ from Wardrobe import Wardrobe
 def main():
     w = Wardrobe()
     w.from_csv('./good_matts_wardrobe.csv')
-    fit, attr = w.getRandomFit(10)
+    fit, attr = w.getRandomFit(100)
     ratings, fit, attr = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
     #print(fit)
     #print(ratings, attr)
