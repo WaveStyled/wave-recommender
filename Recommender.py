@@ -6,11 +6,11 @@ from Wardrobe import Wardrobe
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-#from tensorflow.keras.models import Model, Sequential
-#from tensorflow.keras.layers import Dense, Input, Activation
-# from tensorflow.keras.optimizers import SGD
-#from tensorflow.keras.callbacks import Callback
-
+from tensorflow.keras.models import Model, Sequential
+from tensorflow.keras.layers import Dense, Input, Activation
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import Callback
+from sklearn.model_selection import train_test_split
 
 class Recommender(Wardrobe):
 
@@ -34,9 +34,22 @@ class Recommender(Wardrobe):
     def copy(self):
         return self.dt.copy()
 
-    def train(self, train):
-        pass
+    def train(self):
 
+        model = Sequential()
+        model.add(Dense(units = 16, input_dim=(16,), activation='relu'))
+        model.add(Dense(units = 8, activation= 'relu'))
+        model.add(Dense(units = 1, activation='sigmoid')) 
+        model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+        history = model.fit(
+            X[:14],
+            X[15], 
+            epochs=50,  
+            validation_split=0.2,
+                    )
     def update_weights(self):
         pass 
 
