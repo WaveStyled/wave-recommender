@@ -12,6 +12,9 @@ import psycopg2 as psqldb
 
 class Wardrobe:
 
+    oc_mappings = {"oc_formal": 1, "oc_semi_formal": 2, "oc_casual": 3, "oc_workout": 4, "oc_outdoors": 5, "oc_comfy": 6}
+    we_mappings = {"we_cold": 1, "we_hot": 2, "we_rainy": 3, "we_snowy": 4, "we_typical": 5}
+
     def __init__ (self):
         self.dt = pd.DataFrame(columns=['pieceid', "type", "color", "recent_date_worn", "times_worn", 
             "rating", "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
@@ -43,7 +46,7 @@ class Wardrobe:
         return self.dt
 
     def gen(self, occasion, weather, ends):
-        x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt["oc_"+occasion] == 1) & (self.dt["we_"+weather] == 1) ]
+        x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt[occasion] == 1) & (self.dt[weather] == 1) ]
         if (len(x.index)==0):
             return -1
         chosen = x.sample()
@@ -57,7 +60,7 @@ class Wardrobe:
         bot = ""
         hat = ""
         fit = [0,0,0,0,0,0,0]
-        if (weather == "hot"):
+        if (weather == "we_hot"):
             hat_chance = randint(1,3)
             
             if(hat_chance == 1):
@@ -69,7 +72,7 @@ class Wardrobe:
             fit[4] = bot
             shoes = self.gen(occasion,weather,"O")
             fit[5] = shoes
-        elif (weather == "cold"):
+        elif (weather == "we_cold"):
             hat_chance = randint(1,3)
             if(hat_chance == 1):
                 hat = self.gen(occasion,weather,"A")
@@ -84,7 +87,7 @@ class Wardrobe:
             fit[4] = bot
             shoes = self.gen(occasion,weather,"O")
             fit[5] = shoes
-        elif (weather == "rainy"):
+        elif (weather == "we_rainy"):
             
             hat_chance = randint(1,2)
             if(hat_chance == 1):
@@ -105,7 +108,7 @@ class Wardrobe:
             fit[5] = shoes
             jacket = self.gen(occasion, weather,"C")
             fit[3] = jacket
-        elif (weather == "typical"):
+        elif (weather == "we_typical"):
             shirt_or_sweat = randint(1,2)
             if(shirt_or_sweat == 1):
                 # shirt
@@ -130,7 +133,7 @@ class Wardrobe:
                 fit[0] = hat
             shoes = self.gen(occasion,weather,"O")
             fit[5] = shoes
-        elif (weather == "snowy"):
+        elif (weather == "we_snowy"):
             hat_chance = randint(1,2)
             if(hat_chance == 1):
                 hat = self.gen(occasion,weather,"A")
@@ -147,8 +150,8 @@ class Wardrobe:
         return fit
 
     def getRandomFit(self, num_fits=1):
-        occasions = ["formal","semi_formal","casual","workout","outdoors","comfy"]
-        weather = ["hot","cold","rainy","snowy","typical"]
+        occasions = ["oc_formal","oc_semi_formal","oc_casual","oc_workout","oc_outdoors","oc_comfy"]
+        weather = ["we_hot","we_cold","we_rainy","we_snowy","we_typical"]
         fits = []
         oc_we = []
         for _ in range(0,num_fits,1):
@@ -199,33 +202,35 @@ class Wardrobe:
         return ratings
 
     def outfitToDB(self, outfits, ratings, attrs, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
-        if not (len(outfits) == len(ratings) == len(attrs)):
+        if len(outfits) == len(ratings) == len(attrs):
             try: 
-                with psqldb.connect(
+                with psqldb.connect(   ## open the connection
                         host = HOSTNAME,
                         dbname = DATABASE,
                         user = USER,
                         password = PASS,
                         port = PORT) as conn:
 
-                    with conn.cursor(cursor_factory=psqldb.extras.DictCursor) as curs:
+                    with conn.cursor() as curs:
                         
+                        curs.execute('SELECT COUNT(*) FROM outfits')
+                        pk = curs.fetchone()[0] + 1
                         
-                        
-                        ### insert
-                        # insert_script = 'INSERT INTO .....'
-                        # insert_values = [(1,2,3,4,4)]
-                        # for iv in insert_values:
-                        #    curs.execute(insert_script, iv)
-
+                        insert_script = ("INSERT INTO outfits " 
+                                        "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
+                                        "shoes, misc, occasion, weather, liked) "
+                                        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+                        for i in range(len(outfits)):
+                            inputs = tuple([pk] + outfits[i] + 
+                                    [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])])
+                            curs.execute(insert_script, inputs)
+                            pk+=1
                         conn.commit() ## save transactions into the database
             except Exception as error:
                 print(error)
             finally:
                 if conn:
                     conn.close()   ## close the connection -- wraps each SQL call
-
-
 
     def __getitem__ (self, clothing_type):  ## allows for [] notation with the object
         return self.dt.loc[(self.dt["type"].str.endswith(clothing_type))].to_records(index=False)
