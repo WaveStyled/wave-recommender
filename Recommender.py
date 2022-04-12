@@ -1,19 +1,21 @@
 import numpy as np
 import pandas as pd
 from Wardrobe import Wardrobe
-# import matplotlib.pyplot as plt
-# import seaborn as sns
 import tensorflow as tf
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Activation, BatchNormalization
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, Input, Activation
+from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.callbacks import Callback
 
 
 class Recommender():
 
     def __init__ (self, wardrobe):
-        self.wardrobe = wardrobe
-        model = Sequential()
+        self.dt = pd.DataFrame(columns=['outfit_id' | 'hat' | 'shirt' | 'sweater' | 'jacket' | 'bottom_layer' | 'shoes' | 'misc' | 'times_worn' | 'recent_date_worn' | 'fit_score' | 'occasion' | 'weather' | 'liked' ])
 
     def train(self, train):
         pass
@@ -41,11 +43,51 @@ class Recommender():
         return self.wardrobe
 
 
+def enumerate_colors(colors):
+  filtered_list = list(filter(lambda ele:ele is not None, colors))
+  unique_colors = set(filtered_list)
+  return {col: i for i, col in enumerate(unique_colors)}
+
+def add_color_to_mapping(mapping, color):
+  if color and color not in mapping:
+    val = max(mapping, key=mapping.get)+1
+    mapping[color] = val
+
+
+#tf.debugging.set_log_device_placement(True)
+
+def build_model2(): 
+  model = Sequential() 
+  model.add(Dense(units = 8, input_dim=2, activation='tanh'))
+  # num_parameters = 8 * (2 + 1) = 24 
+  model.add(Dense(units = 8, activation='tanh')) 
+  # = 8 * (8 + 1) = 72
+  model.add(Dense(units = 1, activation='sigmoid')) 
+  # = 1 * (8 + 1) = 9
+  return model
+
+model = build_model2()
+sgd = SGD(lr=0.05, decay=1e-6, momentum=0.9)
+model.compile(loss='binary_crossentropy',
+              optimizer=sgd,
+              metrics=['accuracy'])
+
+history = model.fit(x,
+                    y, 
+                    epochs=150, 
+                    batch_size=128, 
+                    validation_split=0.2,
+                    )
+
+
+def main():
+    r = Recomennder()
+    r.from_csv('./outfits.csv')
+    print(w)
+
+
+
 if __name__ == '__main__':
-    w = Wardrobe()
-    w.from_csv('./good_matts_wardrobe.csv')
-    r = Recommender(w)
-    print(r.getwd())
 
 
 
