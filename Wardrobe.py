@@ -197,7 +197,7 @@ class Wardrobe:
                         return ratings
                 ratings.append(like_dislike)
                 cv.destroyAllWindows()  # if you want to remove window on key press
-        i +=1
+            i +=1
         cv.destroyAllWindows()
         return ratings
 
@@ -215,7 +215,7 @@ class Wardrobe:
                         
                         curs.execute('SELECT COUNT(*) FROM outfits')
                         pk = curs.fetchone()[0] + 1
-                        
+
                         insert_script = ("INSERT INTO outfits " 
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
