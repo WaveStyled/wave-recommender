@@ -1,3 +1,10 @@
+##########
+#
+# REST API that runs the Python server connection
+#
+# INSTALL: python3 -m pip install fastapi uvicorn[standard]
+##########
+
 # Library imports
 import uvicorn
 import sys
@@ -5,7 +12,7 @@ from fastapi import FastAPI
 from typing import Optional
 from Wardrobe import Wardrobe
 
-# Creates app and wardobr instance
+# Creates app and wardobe instance
 app = FastAPI()
 wardrobe = Wardrobe()
 

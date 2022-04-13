@@ -3,6 +3,7 @@
 # Represents an Item
 # Same representation as a row in the SQL Databases
 #
+# DEPRECATED AS OF CURRENT PANDAS OVERHAUL
 ##########
 
 class Item:
