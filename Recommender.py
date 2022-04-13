@@ -3,6 +3,7 @@ import pandas as pd
 from Wardrobe import Wardrobe
 # import tensorflow as tf
 
+# Suppresses the errors that TF gives on import
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
