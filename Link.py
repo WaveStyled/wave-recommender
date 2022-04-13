@@ -3,6 +3,8 @@
 # REST API that runs the Python server connection
 #
 # INSTALL: python3 -m pip install fastapi uvicorn[standard]
+#
+# See Wardrobe class for any further installation commands if necessary
 ##########
 
 # Library imports

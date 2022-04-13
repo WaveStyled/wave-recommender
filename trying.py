@@ -13,7 +13,7 @@ def main():
     #print(ratings, attr)
     w.outfitToDB(outfits=fit, ratings=ratings, attrs=attr)
 
-'''
+    '''
     t = []
     for i in fit:
         t = [w.getItem(z) for z in i]
@@ -26,7 +26,7 @@ def main():
 
 
     colors = [col.color for col in t if col]
-'''
+    '''
     # print(types, colors, attr)
     # ratings = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
     # print(ratings)

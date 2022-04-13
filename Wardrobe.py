@@ -6,6 +6,9 @@
 #
 # INSTALL: python3 -m pip install pandas 
 #          python3 -m pip install opencv-python
+#          python3 -m pip install psycopg2-binary
+#
+# Note: pandas should install NumPy for you, but in case: python3 -m pip install numpy
 ##########
 from Item import Item
 import pandas as pd

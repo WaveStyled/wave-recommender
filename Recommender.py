@@ -1,3 +1,17 @@
+##########
+#
+# Recommender Class represented as a PANDAS Dataframe
+#
+# Stores all the outfits, processes the data and trains a Neural Network to be used
+# as the basis for our recommendations
+#
+# INSTALL: python3 -m pip install tensorflow 
+#          Perhaps matplotlib, etc.
+#
+# Note: Tensorflow is large, so expect slow installation and slow running of programs
+# ANY RUN of this program should take around 15-20 seconds to run
+##########
+
 import numpy as np
 import pandas as pd
 from Wardrobe import Wardrobe
@@ -15,18 +29,59 @@ from sklearn.model_selection import train_test_split
 
 class Recommender(Wardrobe):
 
-    mappings = {}
+    mappings = {} # stores the unique color encodings; shared among all Recommender instances
 
+    """
+    Function: 
+    Recommender constructor
+
+    Desc: 
+    Initializes an empty Pandas dataframe that represents the outfits (without color)
+    Recommender inherits the Wardrobe class in order to have extendable functionality
+    Initializes the Neural Network Model as well
+
+    Inputs: None
+    
+    Returns: None
+    """
     def __init__ (self):
         super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
                  'shoes','misc','times_worn','recent_date_worn','fit_score','occasion','weather','liked'])
         self.model = None
 
+    """
+    Function: 
+    Recommender - Normalize
+
+    Desc: 
+    Normalizes the clothing data points to a value between 0 and 1
+    NOTE: DATAFRAME MODIFIED IN PLACE
+
+    Inputs:
+    - cols [STR] --> the column names of the outfit table - DEFAULT the column names of the Outfits table
+    
+    Returns: None (modifies the dataframe in place)
+    """
     def normalize(self, col=['hat','shirt','sweater','jacket','bottom_layer','shoes','misc']):
          for c in col:
              self.dt[c] = self.dt[c] / self.dt[c].abs().max()
              self.dt[c].fillna(0, inplace=True)
-             
+    
+    """
+    Function: 
+    Recommender - Encode Colors
+
+    Desc: 
+    ENCODES COLOR STRINGS TO UNIQUE NUMBERS
+    Extracts the unique colors of each item in each row of the Dataframe and adds it to the shared color mapping after
+    assigning it a unique value.
+    Then, adds the encoded colors to the corresponding entries in the database
+
+    Inputs:
+    - cols [STR] --> the column color names of the outfit table - DEFAULT the column color names of the Outfits table
+    
+    Returns: None (modifies the dataframe in place)
+    """   
     def encode_colors(self, col = ["color_hat","color_shirt","color_sweater","color_jacket","color_bottom_layer","color_shoes","color_misc"]):
         colors = set()
         for c in col:
@@ -42,9 +97,22 @@ class Recommender(Wardrobe):
         
         for x in colors:
             for f in fn:
-                f[f == x] = Recommender.mappings[x] # gives some kinda warnin no idea how to fix
+                f[f == x] = Recommender.mappings[x] # gives some kinda warning no idea how to fix
 
-    def create_train(self, wd): # return 107 16-tuples
+    """
+    Function: 
+    Recommender - Create Training Dataset
+
+    Desc: 
+    Goes through each row in the dataframe and builds a training input for the model
+    
+    TRAIN INPUT STRUCTURE: 14-element tuple with first 7 being normalized types and second 7 being the colors
+    
+    Inputs: None
+    
+    Returns: 2 numpy Arrays with the first containing the training outfit set and the second containing the labels
+    """
+    def create_train(self): # return 107 16-tuples
         train = []
         labels = []
         for of in self.dt.itertuples():
@@ -55,6 +123,19 @@ class Recommender(Wardrobe):
             labels.append(liked)
         return np.array(train), np.array(labels)
     
+    """
+    Function: 
+    Recommender - Add Colors
+
+    Desc: 
+    Goes through each row in the dataframe and adds the colors of each item to the row as the color string specified
+    in the given wardrobe instance
+        
+    Inputs: 
+    - wd Wardrobe - instance of a Wardrobe
+    
+    Returns: None
+    """
     def addColors(self, wd):
         self.dt['color_hat'] = self.dt.apply(
                 lambda row : wd.getItem(row.hat)[2] if wd.getItem(row.hat) else 'null', axis=1)
@@ -116,7 +197,7 @@ def main():
     r.normalize()
 
     # training
-    train, labels = r.create_train(w)
+    train, labels = r.create_train()
     r.buildModel()
     r.train(train,labels)
 
