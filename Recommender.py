@@ -71,13 +71,22 @@ class Recommender(Wardrobe):
         self.dt['color_misc'] = self.dt.apply(
                 lambda row : wd.getItem(row.misc)[2] if wd.getItem(row.misc) else 'null', axis=1)
 
-    def getdf(self):
-        return self.dt
+    def train(self,X,y):
+        # Split into training and validation sets
+        x_set, X_test, y_set, y_test = train_test_split(X, y, test_size=0.2, random_state=144)
+        X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
-    def train(self,X,Y):
-        history = self.model.fit(X,Y, epochs=100)
+        print("Training ...")
+        history = self.model.fit(X_train, y_train, epochs=100, validation_data=(X_val, y_val)) # batch size?
+        
+        print("Evaluation ...")
+        results = self.model.evaluate(X_test, y_test) #  batch_size=128 from the source
+        print(f"test loss {results[0]}, test acc: {results[1]}")
+
+        # predictions = self.model.predict(X_test)
+        # perhaps include graphs?
     
-    def generate_outfit(self, occasion, weather):  # use tf predict method
+    def generate_outfit(self, occasion, weather, fit):  # use tf predict method
         pass
 
     def buildModel(self):
@@ -88,6 +97,12 @@ class Recommender(Wardrobe):
         self.model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
+
+    def getModel(self):
+        return self.model
+
+    def getdf(self):
+        return self.dt
 
 def main():
     w = Wardrobe()
@@ -107,18 +122,7 @@ def main():
 
     #recommending
 
-
 if __name__ == '__main__':
      main()
 
-
 #tf.debugging.set_log_device_placement(True)
-
-
-
-## IDEAS:
-# the model algorithm is the same, but the occasion/weather can be treated as bias terms
-# Bias can be thought of as multipliers that influence
-# Can ask the user about "importance" factor, which can increase or decrease that multiplier
-# As a apart of the initial screening phase, the user should be prompted to give initial preference data 
-# (like favorite color or color combo or type of clothing) so the model can pretrain and give decent initial screening fits
