@@ -1,12 +1,11 @@
-import signal
+# Library imports
 import uvicorn
 import sys
 from fastapi import FastAPI
 from typing import Optional
 from Wardrobe import Wardrobe
-# from Item import Item
-# from Recommender import Recommender
 
+# Creates app and wardobr instance
 app = FastAPI()
 wardrobe = Wardrobe()
 
@@ -139,7 +138,6 @@ async def killServer():
         
     print("Node server has triggered shutdown")
     #del wardrobe
-    signal.signal(signal.SIGINT, signal_handler)
     # sys.exit(0)
     return 1
 

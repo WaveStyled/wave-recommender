@@ -247,4 +247,5 @@ class Wardrobe:
         return len(self.dt)
 
     def __del__ (self):
-        print("Wardrobe eliminated")
+        #print("Wardrobe eliminated")
+        return
