@@ -15,10 +15,13 @@ from sklearn.model_selection import train_test_split
 
 class Recommender(Wardrobe):
 
+    mappings = {}
+
     def __init__ (self):
-         super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
+        super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
                  'shoes','misc','times_worn','recent_date_worn','fit_score','occasion','weather','liked'])
-    
+        self.model = None
+
     def normalize(self, col=['hat','shirt','sweater','jacket','bottom_layer','shoes','misc']):
          for c in col:
              self.dt[c] = self.dt[c] / self.dt[c].abs().max()
@@ -29,23 +32,28 @@ class Recommender(Wardrobe):
         for c in col:
             colors  |= set(self.dt[c].unique())
 
-        mapping = {col: i for i, col in enumerate(colors)}
+        mapping = {col: (i + len(Recommender.mappings)) 
+                            for i, col in enumerate(colors) if col not in Recommender.mappings}
+        Recommender.mappings.update(mapping)
+        #copy = {**Recommender.mappings}
+
         fn = [self.dt.color_hat, self.dt.color_shirt, self.dt.color_sweater,
                 self.dt.color_jacket, self.dt.color_bottom_layer, self.dt.color_shoes, self.dt.color_misc]
         
         for x in colors:
             for f in fn:
-                f[f == x] = mapping.get(x)
-
+                f[f == x] = Recommender.mappings[x] # gives some kinda warnin no idea how to fix
 
     def create_train(self, wd): # return 107 16-tuples
         train = []
+        labels = []
         for of in self.dt.itertuples():
             outfit = [of.hat, of.shirt, of.sweater, of.jacket, of.bottom_layer, of.shoes, of.misc]
             colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
             liked = [1 if of.liked == 't' else 0]
-            train.append(list(outfit+colors+liked))
-        return train
+            train.append(outfit+colors)
+            labels.append(liked)
+        return np.array(train), np.array(labels)
     
     def addColors(self, wd):
         self.dt['color_hat'] = self.dt.apply(
@@ -67,53 +75,39 @@ class Recommender(Wardrobe):
         return self.dt
 
     def train(self,X,Y):
-        model = Sequential()
-        model.add(Dense(units = 13, input_dim=13, activation='relu'))
-        model.add(Dense(units = 8, activation= 'relu'))
-        model.add(Dense(units = 1, activation='sigmoid')) 
-        model.compile(loss='binary_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-
-        history = model.fit(
-            X,
-            Y, 
-            epochs=100,  
-                    )
+        history = self.model.fit(X,Y, epochs=100)
     
     def generate_outfit(self, occasion, weather):  # use tf predict method
         pass
 
-    def buildModel(self, input):
-        pass
-
-def add_color_to_mapping(mapping, color):
-  if color and color not in mapping:
-    val = max(mapping, key=mapping.get)+1
-    mapping[color] = val
-
-
+    def buildModel(self):
+        self.model = Sequential()
+        self.model.add(Dense(units = 14, input_dim=14, activation='relu'))
+        self.model.add(Dense(units = 8, activation= 'relu'))
+        self.model.add(Dense(units = 1, activation='sigmoid')) 
+        self.model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
 
 def main():
     w = Wardrobe()
     w.from_csv("./good_matts_wardrobe.csv")
 
+    ## setup
     r = Recommender()
     r.from_csv('./outfits.csv')
-    print(r)
     r.addColors(w)
     r.encode_colors()
     r.normalize()
-    #print(r.getdf().head())
 
-    train = r.create_train(w)
-    X = []
-    Y = []
-    for x in train:
-        X.append(x[0:13])
-        Y.append(x[14])
-    #print(X[0].shape)
-    r.train(X,Y)
+    # training
+    train, labels = r.create_train(w)
+    r.buildModel()
+    r.train(train,labels)
+
+    #recommending
+
+
 if __name__ == '__main__':
      main()
 
