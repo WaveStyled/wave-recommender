@@ -26,6 +26,7 @@ from tensorflow.keras.layers import Dense, Input, Activation
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import Callback
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import load_model
 
 class Recommender(Wardrobe):
 
@@ -158,7 +159,7 @@ class Recommender(Wardrobe):
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
         print("Training ...")
-        history = self.model.fit(X_train, y_train, epochs=100, validation_data=(X_val, y_val)) # batch size?
+        history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")
         results = self.model.evaluate(X_test, y_test) #  batch_size=128 from the source
@@ -184,6 +185,34 @@ class Recommender(Wardrobe):
 
     def getdf(self):
         return self.dt
+    """
+    Function: 
+    Recommender - Save Model
+    Desc: 
+    Saves a model given its name. Currently saves to the same directory as the recommender.py 
+        
+    Inputs: 
+    - name: string of what the file should be called
+    
+    Returns: None
+    """
+    def save_model(self,name):
+        self.model.save(name+".h5")
+    
+    """
+    Function: 
+    Recommender - Load model
+    Desc: 
+    loads a model given its name. Currently loads from the same directory as the recommender.py 
+        
+    Inputs: 
+    - name: string of what the file should is called
+    
+    Returns: Sets recommender object(self.model) to the loaded model
+    """
+
+    def load_model(self,name):
+        self.model = load_model(name+".h5")
 
 def main():
     w = Wardrobe()
