@@ -445,6 +445,7 @@ class Wardrobe:
     """
     def outfitToDB(self, outfits, ratings, attrs, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         if len(outfits) == len(ratings) == len(attrs):
+            conn = None
             try: 
                 with psqldb.connect(   ## open the connection
                         host = HOSTNAME,
@@ -473,6 +474,13 @@ class Wardrobe:
             finally:
                 if conn:
                     conn.close()   ## close the connection
+
+
+    def logIn(self):
+        self.logged_in = True
+    
+    def logOut(self):
+        self.logged_in = False
 
     """
     Function: 

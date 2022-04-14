@@ -15,6 +15,7 @@
 import numpy as np
 import pandas as pd
 from Wardrobe import Wardrobe
+import psycopg2 as psqldb 
 # import tensorflow as tf
 
 # Suppresses the errors that TF gives on import
@@ -49,6 +50,41 @@ class Recommender(Wardrobe):
         super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
                  'shoes','misc','times_worn','recent_date_worn','fit_score','occasion','weather','liked'])
         self.model = None
+
+    """
+    Function: 
+    Recommender Intializer from the Outfits DB
+
+    Desc: 
+    Initializes the Recommender dataframe from the Outfits datatable
+
+    Inputs: (optional) the info for the database connection
+    
+    Returns: None
+    """
+    def fromDB(self, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+        conn = None
+        try: 
+            with psqldb.connect(   ## open the connection
+                    host = HOSTNAME,
+                    dbname = DATABASE,
+                    user = USER,
+                    password = PASS,
+                    port = PORT) as conn:
+
+                with conn.cursor() as curs:
+
+                    curs.execute('SELECT * FROM outfits')
+                    rows = curs.fetchall()
+                    for r in rows:
+                        self.addItem(r)
+                    
+                    conn.commit() ## save transactions into the database
+        except Exception as error:
+            print(error)
+        finally:
+            if conn:
+                conn.close()   ## close the connection
 
     """
     Function: 
