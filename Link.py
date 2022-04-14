@@ -116,9 +116,15 @@ Outputs:
 """
 @app.put("/calibrate_start/{num_calibrate}")
 async def calibrate_start(num_calibrate: int):
-    fits = wardrobe.getRandomFit(20)
+    fits = wardrobe.getRandomFit(num_calibrate)
     #model = Recommender(wardrobe)
     return fits
+
+@app.put("/calibrate_end")
+async def calibrate_end(ratings: list):
+    user_ratings = ratings
+    print(user_ratings)
+    return 200
 
 """
 Function: 
