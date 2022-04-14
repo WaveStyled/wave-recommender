@@ -8,12 +8,13 @@
 ##########
 
 # Library imports
+from cv2 import fitEllipse
 import uvicorn
 import sys
 from fastapi import FastAPI
-from typing import Optional
+from typing import Optional, List
 from Wardrobe import Wardrobe
-from Recommender import Recommender
+#from Recommender import Recommender
 
 # Creates app and wardobe instance
 app = FastAPI()
@@ -24,6 +25,7 @@ wardrobe = Wardrobe()
 async def boot():
     if(wardrobe.logged_in == False):
         wardrobe.from_csv("./good_matts_wardrobe.csv")
+        wardrobe.logIn()
         return 200
     else:
         return 404
@@ -103,7 +105,7 @@ async def recommend(attrs : dict, userid : Optional[int] = None):
 
 """
 Function: 
-Python server - calibrate_start: INCOMPLETE
+Python server - calibrate_start: COMPLETE
 
 Desc: 
 User chooses to calibrate, node pings python to generate some random outfits from the users DB
@@ -117,13 +119,11 @@ Outputs:
 @app.put("/calibrate_start/{num_calibrate}")
 async def calibrate_start(num_calibrate: int):
     fits = wardrobe.getRandomFit(num_calibrate)
-    #model = Recommender(wardrobe)
     return fits
 
-@app.put("/calibrate_end")
-async def calibrate_end(ratings: list):
-    user_ratings = ratings
-    print(user_ratings)
+@app.put("/calibrate_end/")
+async def calibrate_end(metadata: list):
+    wardrobe.outfitToDB(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
 """
