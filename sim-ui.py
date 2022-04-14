@@ -2,7 +2,6 @@ from anyio import ConditionStatistics
 import requests
 import cv2 as cv
 import numpy as np
-from Recommender import Recommender
 
 def main_loop():
     while True:
@@ -14,8 +13,29 @@ def main_loop():
 
 def main():
     bootup()
-    calibrate()
-    recommend()
+    print("WAVESTYLED UI SIMULATION")
+    choice = int(input("Start? (1/0): "))
+    if choice == 1:
+        choice2 = int(input("Calibrate Model? (1/0): "))
+        if choice2 == 1:
+            calibrate()
+            train_recommender()
+        print("RECOMMENDATIONS:")
+        while True:
+            recommend() ## display fits
+            like = int(input("Like (1) Dislike (0) Choose Fit for the Day (2)  Quit (3): "))
+            if like == 3:
+                break
+            # ping model and retrain.. maybe retrain in batches?
+    
+    ## save models , data, and ensure storage is persistent
+            
+    
+            
+    
+    
+    
+    
 
 
 # Calls server startup, loads the wardrobe csv
@@ -32,16 +52,19 @@ def calibrate():
 
     # display images
     ratings, fit, attr = displayFit(fits, conditions, '../matts_wardrobe_jpeg')
-    print(ratings, fit, attr)
+    # print(ratings, fit, attr)
 
     # send ratings back
     requests.put("http://localhost:5001/calibrate_end/", json=[ratings, fit, attr])
 
+def train_recommender():
+    print("CALIBRATING RECOMMENDER MODEL...\n")
+    requests.post("http://localhost:5001/create_recommender/")
+    print("TRAINING RECOMMENDER...\n")
+    requests.get("http://localhost:5001/recommender_train/")
+
 def recommend():
-    #requests.put("http://localhost:5001/calibrate_end/", json=[ratings, fit, attr])
-    r = Recommender()
-    r.fromDB()
-    print(r.getdf())
+    pass
 
 
 def displayFit(outfit, conditions, path):

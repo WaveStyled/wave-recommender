@@ -155,7 +155,8 @@ class Recommender(Wardrobe):
         for of in self.dt.itertuples():
             outfit = [of.hat, of.shirt, of.sweater, of.jacket, of.bottom_layer, of.shoes, of.misc]
             colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
-            liked = [1 if of.liked == 't' else 0]
+            liked = [1 if of.liked or of.liked == 't' else 0]
+            print("Liked:", of.liked)
             train.append(outfit+colors)
             labels.append(liked)
         return np.array(train), np.array(labels)
