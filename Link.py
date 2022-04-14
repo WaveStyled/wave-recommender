@@ -13,6 +13,7 @@ import sys
 from fastapi import FastAPI
 from typing import Optional
 from Wardrobe import Wardrobe
+from Recommender import Recommender
 
 # Creates app and wardobe instance
 app = FastAPI()
@@ -84,7 +85,9 @@ Outputs:
  - List of different outfits(pieceIDs)
 """
 @app.get("/recommend")
-async def recommend():
+async def recommend(attrs : dict, userid : Optional[int] = None):
+    fits = []
+    return 0
     # model.recommend(occaison, weather, data)
     pass ## pass wardrobe into the Recommender
 
@@ -104,6 +107,7 @@ Outputs:
 """
 @app.get("/calibrate_start")
 async def calibrate_start():
+    
     #model = Recommender(wardrobe)
     return 200
 

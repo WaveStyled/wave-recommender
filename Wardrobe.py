@@ -228,7 +228,7 @@ class Wardrobe:
         hat = ""
         fit = [0,0,0,0,0,0,0]
         if (weather == "we_hot"):
-            hat_chance = randint(1,3)
+            hat_chance = randint(1,4)
             
             if(hat_chance == 1):
                 hat = self.gen(occasion,weather,"A")
@@ -250,6 +250,11 @@ class Wardrobe:
                 fit[1] = under
             top =  self.gen(occasion,weather,"T")
             fit[2] = top
+            jacket_chance = randint(1,4)
+            if(jacket_chance == 1):
+                jacket = self.gen(occasion, weather,"C")
+                fit[3] = jacket
+            
             bot = self.gen(occasion,weather,"P")
             fit[4] = bot
             shoes = self.gen(occasion,weather,"O")
@@ -305,9 +310,12 @@ class Wardrobe:
             if(hat_chance == 1):
                 hat = self.gen(occasion,weather,"A")
                 fit[0] = hat
-            
+            undershirt_chance = randint(1,4)
+            if(undershirt_chance == 1):
+                under =	self.gen(occasion,weather,"S")
+                fit[1] = under
             top =  self.gen(occasion,weather,"T")
-            fit[1] = top
+            fit[2] = top
             bot = self.gen(occasion,weather,"P")
             fit[4] = bot
             shoes = self.gen(occasion,weather,"O")

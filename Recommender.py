@@ -214,6 +214,7 @@ class Recommender(Wardrobe):
     def load_model(self,name):
         self.model = load_model(name+".h5")
 
+
 def main():
     w = Wardrobe()
     w.from_csv("./good_matts_wardrobe.csv")
