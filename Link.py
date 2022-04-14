@@ -19,6 +19,15 @@ from Recommender import Recommender
 app = FastAPI()
 wardrobe = Wardrobe()
 
+
+@app.put("/start")
+async def boot():
+    if(wardrobe.logged_in == False):
+        wardrobe.from_csv("./good_matts_wardrobe.csv")
+        return 200
+    else:
+        return 404
+
 """
 Function: 
 Python server - add item
@@ -84,7 +93,7 @@ Inputs:
 Outputs:
  - List of different outfits(pieceIDs)
 """
-@app.get("/recommend")
+@app.get("/recommend/}")
 async def recommend(attrs : dict, userid : Optional[int] = None):
     fits = []
     return 0
@@ -105,11 +114,11 @@ Inputs:
 Outputs:
  - List of different randomly generated outfits(pieceIDs)
 """
-@app.get("/calibrate_start")
-async def calibrate_start():
-    
+@app.put("/calibrate_start/{num_calibrate}")
+async def calibrate_start(num_calibrate: int):
+    fits = wardrobe.getRandomFit(20)
     #model = Recommender(wardrobe)
-    return 200
+    return fits
 
 """
 Function: 

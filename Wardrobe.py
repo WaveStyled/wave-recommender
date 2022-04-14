@@ -38,6 +38,7 @@ class Wardrobe:
             "rating", "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
             "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"]
                     ):
+        self.logged_in = False
         self.dt = pd.DataFrame(columns=cols)
     
     """
@@ -56,6 +57,7 @@ class Wardrobe:
     """
     def from_csv(self, path):
         self.dt = pd.read_csv(path)
+        self.logged_in = True
     
     """
     Function: 
