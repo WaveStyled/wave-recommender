@@ -209,7 +209,9 @@ class Recommender(Wardrobe):
         prediction = 1
         while not prediction:
             wd.gen_random(occasion, weather)
-            # encode fit to tuple
+
+            # self.model.predict()
+            # encode fit to tuple, add to DF, get colors, then feed into model, if 0 then try again, if 1 then send it back
             #prediction = self.model.predict()
 
 

@@ -119,6 +119,7 @@ async def recommend(occasion : str, weather : str, userid : Optional[int] = None
     #recommender.fromDB()
     # run prediction
     print(occasion, weather)
+    
     return 200
 
 """
