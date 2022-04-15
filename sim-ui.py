@@ -59,7 +59,7 @@ def train_recommender():
     requests.get("http://localhost:5001/recommender_train/")
 
 def recommend(occasion, weather):
-    requests.get("http://localhost:5001/recommender/")
+    requests.get("http://localhost:5001/recommend/")
     
     pass
 

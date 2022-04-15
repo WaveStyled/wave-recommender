@@ -107,9 +107,10 @@ async def recommend(userid : Optional[int] = None):
     recommender.addColors(wardrobe)
     recommender.encode_colors()
     #recommender.normalize()
-
+    print("Done -1")
     # training
     train, labels = recommender.create_train()
+    print("Done")
     recommender.buildModel()
     recommender.train(train,labels)
     return 200

@@ -220,10 +220,10 @@ class Recommender(Wardrobe):
                     update_color = color if color else 'null'
                     Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
                 colors.append(color_ind)
-            to_predict = np.array(fit + colors)
-            print(to_predict.shape)
-            if to_predict.size:
-                print(self.model.predict(to_predict))
+            to_predict = np.array(fit + colors).reshape(1,-1)
+            print(to_predict)
+           
+            print(self.model.predict(to_predict))
             #colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
             prediction = 1
             
@@ -305,7 +305,7 @@ def main():
         print("RECOMMENDATIONS:")
         occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
         weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
-        r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w, train)
+        r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w)
 
 
 if __name__ == '__main__':
