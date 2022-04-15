@@ -9,7 +9,7 @@ def main():
     w.from_csv('./good_matts_wardrobe.csv')
     fit, attr = w.getRandomFit(100)
     ratings, fit, attr = w.displayFit(fit, attr, '../matts_wardrobe_jpeg')
-    print(ratings)
+    #print(ratings)
     #print(fit)
     #print(ratings, attr)
    # w.outfitToDB(outfits=fit, ratings=ratings, attrs=attr)

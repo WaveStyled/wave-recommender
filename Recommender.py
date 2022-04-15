@@ -23,7 +23,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 from tensorflow.keras.models import Model, Sequential
-from tensorflow.keras.layers import Dense, Input, Activation
+from tensorflow.keras.layers import Dense, Input, Activation, Flatten
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import Callback
 from sklearn.model_selection import train_test_split
@@ -155,8 +155,7 @@ class Recommender(Wardrobe):
         for of in self.dt.itertuples():
             outfit = [of.hat, of.shirt, of.sweater, of.jacket, of.bottom_layer, of.shoes, of.misc]
             colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
-            liked = [1 if of.liked or of.liked == 't' else 0]
-            print("Liked:", of.liked)
+            liked = [1 if (of.liked or of.liked) == 't' else 0]
             train.append(outfit+colors)
             labels.append(liked)
         return np.array(train), np.array(labels)
@@ -196,6 +195,7 @@ class Recommender(Wardrobe):
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
         print("Training ...")
+        print(X_train[0].shape, "BRUH HERE", type(X_train))
         history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")
@@ -206,9 +206,29 @@ class Recommender(Wardrobe):
         # perhaps include graphs?
     
     def generate_outfit(self, occasion, weather, wd):  # use tf predict method
-        prediction = 1
+        prediction = 0
         while not prediction:
-            wd.gen_random(occasion, weather)
+            fit = wd.gen_random(occasion, weather)
+            colors = []
+            for f in fit:
+                item = wd.getItem(f)
+                color = item[2] if item else item
+                color_ind = Recommender.mappings.get(color) if color else Recommender.mappings.get('null')
+
+                if not color_ind:
+                    color_ind = len(Recommender.mappings) + 1
+                    update_color = color if color else 'null'
+                    Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
+                colors.append(color_ind)
+            to_predict = np.array(fit + colors)
+            print(to_predict.shape)
+            if to_predict.size:
+                print(self.model.predict(to_predict))
+            #colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
+            prediction = 1
+            
+
+           # Recommender.mappings.update(mapping)
 
             # self.model.predict()
             # encode fit to tuple, add to DF, get colors, then feed into model, if 0 then try again, if 1 then send it back
@@ -217,7 +237,8 @@ class Recommender(Wardrobe):
 
     def buildModel(self):
         self.model = Sequential()
-        self.model.add(Dense(units = 14, input_dim=14, activation='relu'))
+        self.model.add(Flatten(input_shape=(14,)))
+        self.model.add(Dense(units = 14, activation='relu'))
         self.model.add(Dense(units = 8, activation= 'relu'))
         self.model.add(Dense(units = 1, activation='sigmoid')) 
         self.model.compile(loss='binary_crossentropy',
@@ -268,14 +289,24 @@ def main():
     r.from_csv('./outfits.csv')
     r.addColors(w)
     r.encode_colors()
-    r.normalize()
+    #r.normalize()
 
     # training
     train, labels = r.create_train()
+    print(train, labels)
     r.buildModel()
     r.train(train,labels)
 
     #recommending
+    oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
+    we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
+    #while True:
+    while True:       
+        print("RECOMMENDATIONS:")
+        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+        r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w, train)
+
 
 if __name__ == '__main__':
      main()

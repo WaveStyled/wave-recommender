@@ -106,7 +106,7 @@ async def recommend(userid : Optional[int] = None):
     #print(wardrobe)
     recommender.addColors(wardrobe)
     recommender.encode_colors()
-    recommender.normalize()
+    #recommender.normalize()
 
     # training
     train, labels = recommender.create_train()
@@ -118,8 +118,8 @@ async def recommend(userid : Optional[int] = None):
 async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
     #recommender.fromDB()
     # run prediction
-    print(occasion, weather)
-    
+    print("we here now", occasion, weather)
+
     return 200
 
 """
