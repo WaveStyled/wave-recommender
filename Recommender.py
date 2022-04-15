@@ -205,8 +205,13 @@ class Recommender(Wardrobe):
         # predictions = self.model.predict(X_test)
         # perhaps include graphs?
     
-    def generate_outfit(self, occasion, weather, fit):  # use tf predict method
-        pass
+    def generate_outfit(self, occasion, weather, wd):  # use tf predict method
+        prediction = 1
+        while not prediction:
+            wd.gen_random(occasion, weather)
+            # encode fit to tuple
+            #prediction = self.model.predict()
+
 
     def buildModel(self):
         self.model = Sequential()

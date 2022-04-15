@@ -3,14 +3,6 @@ import requests
 import cv2 as cv
 import numpy as np
 
-def main_loop():
-    while True:
-        x = input()
-        if(x == "calibrate"):
-            return 
-        if(x == "recommend"):
-            return
-
 def main():
     bootup()
     print("WAVESTYLED UI SIMULATION")
@@ -20,23 +12,25 @@ def main():
         if choice2 == 1:
             calibrate()
             train_recommender()
+        oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
+        we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
+        #while True:
+                      
         print("RECOMMENDATIONS:")
+        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+        quit = 0
         while True:
-            recommend() ## display fits
+            recommend(f'oc_{oc_mappings[occasion]}', f'we_{we_mappings[weather]}') ## display fits
             like = int(input("Like (1) Dislike (0) Choose Fit for the Day (2)  Quit (3): "))
             if like == 3:
+                quit = 1
                 break
+           # if quit: break
             # ping model and retrain.. maybe retrain in batches?
     
     ## save models , data, and ensure storage is persistent
             
-    
-            
-    
-    
-    
-    
-
 
 # Calls server startup, loads the wardrobe csv
 def bootup():
@@ -63,7 +57,8 @@ def train_recommender():
     print("TRAINING RECOMMENDER...\n")
     requests.get("http://localhost:5001/recommender_train/")
 
-def recommend():
+def recommend(occasion, weather):
+    print(occasion, weather)
     pass
 
 

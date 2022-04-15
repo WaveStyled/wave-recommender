@@ -114,6 +114,12 @@ async def recommend(userid : Optional[int] = None):
     recommender.train(train,labels)
     return 200
 
+@app.get("/recommend/")
+async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
+    #recommender.fromDB()
+    # run prediction
+    print(occasion, weather)
+    return 200
 
 """
 Function: 
