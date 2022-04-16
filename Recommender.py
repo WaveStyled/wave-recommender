@@ -157,8 +157,9 @@ class Recommender(Wardrobe):
         for of in self.dt.itertuples():
             outfit = [of.hat, of.shirt, of.sweater, of.jacket, of.bottom_layer, of.shoes, of.misc]
             colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
+            relevant = [of.occasion, of.weather, 0, 0, 0, 0, 0]
             liked = [1 if (of.liked or of.liked) == 't' else 0]
-            train.append(outfit+colors)
+            train.append([outfit,colors,relevant])
             labels.append(liked)
         return np.array(train), np.array(labels)
     
@@ -212,6 +213,7 @@ class Recommender(Wardrobe):
         fit = None
         probs = np.array([])
         fits = np.empty(shape=(0,7), dtype=np.int16)
+        metadata = [Wardrobe.oc_mappings[occasion], Wardrobe.we_mappings[weather],0,0,0,0,0]
         #preds = np.array([])
         
         while prediction and max_tries:
@@ -228,7 +230,7 @@ class Recommender(Wardrobe):
                     update_color = color if color else 'null'
                     Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
                 colors.append(color_ind)
-            to_predict = np.array(fit + colors).reshape(1,-1)           
+            to_predict = np.array([[fit, colors, metadata]])
             pred = self.model.predict(to_predict)
             prediction -= np.argmax(pred)
 
@@ -242,7 +244,7 @@ class Recommender(Wardrobe):
 
     def buildModel(self):
         self.model = Sequential()
-        self.model.add(Flatten(input_shape=(14,)))
+        self.model.add(Flatten(input_shape=(3,7)))
         self.model.add(Dense(units = 14, activation='relu'))
         self.model.add(Dense(units = 8, activation= 'relu'))
         self.model.add(Dense(units = 2, activation = "softmax"))
@@ -293,14 +295,15 @@ def main():
 
     ## setup
     r = Recommender()
-    #r.from_csv('./outfits.csv')
-    r.fromDB()
+    r.from_csv('./outfits.csv')
+    #r.fromDB()
     r.addColors(w)
     r.encode_colors()
     #r.normalize()
 
     # training
     train, labels = r.create_train()
+    print(train.shape, train)
     r.buildModel()
     r.train(train,labels)
 
