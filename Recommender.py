@@ -197,7 +197,6 @@ class Recommender(Wardrobe):
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
         print("Training ...")
-        print(X_train[0].shape, "BRUH HERE", type(X_train))
         history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")
@@ -208,13 +207,13 @@ class Recommender(Wardrobe):
         # perhaps include graphs?
 
     
-    def recommend(self, occasion, weather, wd, max_tries=50, buffer=5):  # use tf predict method
+    def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
         prediction = buffer
         fit = None
         probs = np.array([])
         fits = np.empty(shape=(0,7), dtype=np.int16)
         #preds = np.array([])
-
+        
         while prediction and max_tries:
             max_tries-=1
             fit = wd.gen_random(occasion, weather)  # here we have to check if outfit hasnt been given before (could do it in gen random)
@@ -237,7 +236,7 @@ class Recommender(Wardrobe):
             fits = np.concatenate((fits, [fit]))
 
         if -1 in fit: return None
-
+        ## partial sort to buffer elements
         ind = np.argpartition(probs, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
         return fits[ind].tolist()
 
@@ -294,14 +293,14 @@ def main():
 
     ## setup
     r = Recommender()
-    r.from_csv('./outfits.csv')
+    #r.from_csv('./outfits.csv')
+    r.fromDB()
     r.addColors(w)
     r.encode_colors()
     #r.normalize()
 
     # training
     train, labels = r.create_train()
-    print(train, labels)
     r.buildModel()
     r.train(train,labels)
 

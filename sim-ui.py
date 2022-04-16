@@ -11,7 +11,7 @@ def main():
         choice2 = int(input("Calibrate Model? (1/0): "))
         if choice2 == 1:
             calibrate()
-            train_recommender()
+        train_recommender()
         oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
         we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
         #while True:
@@ -21,11 +21,14 @@ def main():
         weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
         quit = 0
         while True:
-            recommend(f'oc_{oc_mappings[occasion]}', f'we_{we_mappings[weather]}') ## display fits
-            like = int(input("Like (1) Dislike (0) Choose Fit for the Day (2)  Quit (3): "))
-            if like == 3:
-                quit = 1
-                break
+            fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}') ## display fits
+            for f in fits:
+                displayFit(outfit=[f], conditions=[oc_mappings[occasion], we_mappings[weather]], path='../matts_wardrobe_jpeg')
+                like = int(input("Like (1) Dislike (0) Choose Fit for the Day (2)  Quit (3): "))
+                
+                if like == 3:
+                    quit = 1
+                    break
            # if quit: break
             # ping model and retrain.. maybe retrain in batches?
     
@@ -59,9 +62,8 @@ def train_recommender():
     requests.get("http://localhost:5001/recommender_train/")
 
 def recommend(occasion, weather):
-    requests.get("http://localhost:5001/recommend/")
-    
-    pass
+    r = requests.get(f"http://localhost:5001/recommend/?occasion={occasion}&weather={weather}")
+    return r.json()
 
 
 def displayFit(outfit, conditions, path):

@@ -115,11 +115,10 @@ async def recommend(userid : Optional[int] = None):
     recommender.train(train,labels)
     return 200
 
-@app.get("/recommend/")
+@app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
 async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
-    
-
-    return 200
+    fits = recommender.recommend(occasion=occasion, weather=weather, wd=wardrobe)
+    return fits
 
 """
 Function: 
