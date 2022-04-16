@@ -117,9 +117,7 @@ async def recommend(userid : Optional[int] = None):
 
 @app.get("/recommend/")
 async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
-    #recommender.fromDB()
-    # run prediction
-    print("we here now", occasion, weather)
+    
 
     return 200
 

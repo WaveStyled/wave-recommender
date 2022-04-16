@@ -12,6 +12,7 @@
 # ANY RUN of this program should take around 15-20 seconds to run
 ##########
 
+from cv2 import FileStorage_FORMAT_MASK
 import numpy as np
 import pandas as pd
 from Wardrobe import Wardrobe
@@ -28,6 +29,7 @@ from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import Callback
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import load_model
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
 
 class Recommender(Wardrobe):
 
@@ -204,44 +206,50 @@ class Recommender(Wardrobe):
 
         # predictions = self.model.predict(X_test)
         # perhaps include graphs?
+
     
-    def generate_outfit(self, occasion, weather, wd):  # use tf predict method
-        prediction = 0
-        while not prediction:
-            fit = wd.gen_random(occasion, weather)
+    def recommend(self, occasion, weather, wd, max_tries=50, buffer=5):  # use tf predict method
+        prediction = buffer
+        fit = None
+        probs = np.array([])
+        fits = np.empty(shape=(0,7), dtype=np.int16)
+        #preds = np.array([])
+
+        while prediction and max_tries:
+            max_tries-=1
+            fit = wd.gen_random(occasion, weather)  # here we have to check if outfit hasnt been given before (could do it in gen random)
+            if -1 in fit: continue
             colors = []
             for f in fit:
                 item = wd.getItem(f)
                 color = item[2] if item else item
                 color_ind = Recommender.mappings.get(color) if color else Recommender.mappings.get('null')
-
                 if not color_ind:
                     color_ind = len(Recommender.mappings) + 1
                     update_color = color if color else 'null'
                     Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
                 colors.append(color_ind)
-            to_predict = np.array(fit + colors).reshape(1,-1)
-            print(to_predict)
-           
-            print(self.model.predict(to_predict))
-            #colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
-            prediction = 1
-            
+            to_predict = np.array(fit + colors).reshape(1,-1)           
+            pred = self.model.predict(to_predict)
+            prediction -= np.argmax(pred)
 
-           # Recommender.mappings.update(mapping)
+            probs = np.append(probs, [pred[0][1]])
+            fits = np.concatenate((fits, [fit]))
 
-            # self.model.predict()
-            # encode fit to tuple, add to DF, get colors, then feed into model, if 0 then try again, if 1 then send it back
-            #prediction = self.model.predict()
+        if -1 in fit: return None
 
+        ind = np.argpartition(probs, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
+        return fits[ind].tolist()
 
     def buildModel(self):
         self.model = Sequential()
         self.model.add(Flatten(input_shape=(14,)))
         self.model.add(Dense(units = 14, activation='relu'))
         self.model.add(Dense(units = 8, activation= 'relu'))
-        self.model.add(Dense(units = 1, activation='sigmoid')) 
-        self.model.compile(loss='binary_crossentropy',
+        self.model.add(Dense(units = 2, activation = "softmax"))
+        #self.model.add(Dense(units = 1, activation='sigmoid')) 
+        #self.model.compile(loss='binary_crossentropy',
+        self.model.compile(loss=SparseCategoricalCrossentropy(),
               optimizer='adam',
               metrics=['accuracy'])
 
@@ -305,7 +313,11 @@ def main():
         print("RECOMMENDATIONS:")
         occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
         weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
-        r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w)
+        #f = r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w)
+        fits = r.recommend(oc_mappings[occasion], we_mappings[weather], w)
+        for f in fits:
+            print(f)
+        #print(f)
 
 
 if __name__ == '__main__':
