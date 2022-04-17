@@ -101,21 +101,7 @@ Outputs:
 @app.post("/create_recommender/")
 async def recommend(userid : Optional[int] = None):
     user.load_model()
-    user.update_preferences(True)
-    return 200
-
-@app.get("/recommender_train/")
-async def recommend(userid : Optional[int] = None):
-    #print(wardrobe)
-    #recommender.addColors(wardrobe)
-    #recommender.encode_colors()
-    #recommender.normalize()
-    #print("Done -1")
-    # training
-    #train, labels = recommender.create_train()
-    #print("Done")
-    #recommender.buildModel()
-    #recommender.train(train,labels)
+    user.update_preferences(True) # when buffer set train_again to True
     return 200
 
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)

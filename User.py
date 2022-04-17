@@ -44,13 +44,14 @@ class User:
         train, labels = self.rec.create_train()
         self.rec.train(train, labels)
     
-    def update_preferences(self, new_data = True):
+    def update_preferences(self, new_data = True, train_again=False):
         if new_data:
             self.rec.from_csv('./outfits.csv')
         self.rec.fromDB()
         self.rec.addColors(self.wd)
         self.rec.encode_colors()
-        self.train_model()
+        if train_again:
+            self.train_model()
 
     def get_recommendations(self, occasion, weather, buffer=5):
         return self.rec.recommend(occasion=occasion, weather=weather, wd=self.wd, buffer=buffer)
