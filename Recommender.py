@@ -182,9 +182,6 @@ class Recommender(Wardrobe):
         results = self.model.evaluate(X_test, y_test) #  batch_size=128 from the source
         print(f"test loss {results[0]}, test acc: {results[1]}")
 
-        # predictions = self.model.predict(X_test)
-        # perhaps include graphs?
-
     
     def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
         prediction = buffer
@@ -192,7 +189,6 @@ class Recommender(Wardrobe):
         probs = np.array([])
         fits = np.empty(shape=(0,7), dtype=np.int16)
         metadata = [Wardrobe.oc_mappings[occasion], Wardrobe.we_mappings[weather],0,0,0,0,0]
-        #preds = np.array([])
         
         while prediction and max_tries:
             max_tries-=1
@@ -311,10 +307,6 @@ def main():
         if save == 1:
             r.save_model('wavestyled')
             break
-        
-        
-        #print(f)
-
 
 if __name__ == '__main__':
      main()

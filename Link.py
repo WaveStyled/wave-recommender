@@ -15,11 +15,24 @@ from fastapi import FastAPI
 from typing import Optional, List
 from Wardrobe import Wardrobe
 from Recommender import Recommender
+from os.path import exists
 
 # Creates app and wardobe instance
 app = FastAPI()
 wardrobe = Wardrobe()
 recommender = Recommender()
+need_train = True
+
+@app.on_event("startup")
+async def startup_event():
+    path = f'wavestyled.h3'
+    if exists(path):
+        recommender.load_model(path)
+        need_train = False
+
+@app.on_event("shutdown")
+def shutdown_event():
+    recommender.savemodel('') # how would we know which model to close?
 
 
 @app.put("/start")
