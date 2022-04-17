@@ -64,29 +64,7 @@ class Recommender(Wardrobe):
     
     Returns: None
     """
-    def fromDB(self, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
-        conn = None
-        try: 
-            with psqldb.connect(   ## open the connection
-                    host = HOSTNAME,
-                    dbname = DATABASE,
-                    user = USER,
-                    password = PASS,
-                    port = PORT) as conn:
-
-                with conn.cursor() as curs:
-
-                    curs.execute('SELECT * FROM outfits')
-                    rows = curs.fetchall()
-                    for r in rows:
-                        self.addItem(r)
-                    
-                    conn.commit() ## save transactions into the database
-        except Exception as error:
-            print(error)
-        finally:
-            if conn:
-                conn.close()   ## close the connection
+    
 
     """
     Function: 
@@ -243,7 +221,7 @@ class Recommender(Wardrobe):
         good_fits = fits[ind].tolist()
         final_fits = []
         for fit in good_fits:
-            repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].tolist()
+            repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].to_numpy().tolist()
             if(len(repeats)  == 0):
                 final_fits.append(fit)
         return final_fits
@@ -301,11 +279,10 @@ def main():
 
     ## setup
     r = Recommender()
-    r.from_csv('./outfits.csv')
-    #r.fromDB()
+    #r.from_csv('./outfits.csv')
+    r.fromDB()
     r.addColors(w)
     r.encode_colors()
-    #r.normalize()
 
     # training
     train, labels = r.create_train()

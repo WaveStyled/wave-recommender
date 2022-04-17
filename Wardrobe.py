@@ -477,6 +477,30 @@ class Wardrobe:
                     conn.close()   ## close the connection
 
 
+    def fromDB(self, table='outfits', HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+        conn = None
+        try: 
+            with psqldb.connect(   ## open the connection
+                    host = HOSTNAME,
+                    dbname = DATABASE,
+                    user = USER,
+                    password = PASS,
+                    port = PORT) as conn:
+
+                with conn.cursor() as curs:
+
+                    curs.execute(f'SELECT * FROM {table}')
+                    rows = curs.fetchall()
+                    for r in rows:
+                        self.addItem(r)
+                    
+                    conn.commit() ## save transactions into the database
+        except Exception as error:
+            print(error)
+        finally:
+            if conn:
+                conn.close()   ## close the connection
+
     def logIn(self):
         self.logged_in = True
     
