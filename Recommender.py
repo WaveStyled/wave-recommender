@@ -279,16 +279,20 @@ def main():
 
     ## setup
     r = Recommender()
-    #r.from_csv('./outfits.csv')
-    r.fromDB()
-    r.addColors(w)
-    r.encode_colors()
+    load = int(input("load model? (1/0): "))
+    if load == 1:
+        r.load_model('wavestyled')
+    else:
+        r.from_csv('./outfits.csv')
+        #r.fromDB()
+        r.addColors(w)
+        r.encode_colors()
 
-    # training
-    train, labels = r.create_train()
-    print(train.shape, train)
-    r.buildModel()
-    r.train(train,labels)
+        # training
+        train, labels = r.create_train()
+        print(train.shape, train)
+        r.buildModel()
+        r.train(train,labels)
 
     #recommending
     oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
@@ -296,12 +300,19 @@ def main():
     #while True:
     while True:       
         print("RECOMMENDATIONS:")
+        
         occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
         weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
         #f = r.generate_outfit(oc_mappings[occasion], we_mappings[weather], w)
         fits = r.recommend(oc_mappings[occasion], we_mappings[weather], w)
         for f in fits:
             print(f)
+        save = int(input("save model?: "))
+        if save == 1:
+            r.save_model('wavestyled')
+            break
+        
+        
         #print(f)
 
 

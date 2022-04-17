@@ -476,7 +476,17 @@ class Wardrobe:
                 if conn:
                     conn.close()   ## close the connection
 
+    """
+    Function: 
+    Intializer from the DB
 
+    Desc: 
+    Initializes the dataframe from the given datatable
+    DEFAULTs to Outfits table, so must provide table name if want to load wardrobe
+    Inputs: (optional) the info for the database connection
+    
+    Returns: None
+    """
     def fromDB(self, table='outfits', HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         conn = None
         try: 
