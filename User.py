@@ -44,16 +44,20 @@ class User:
 
 class UserBase:
 
+    """
+    to think about --> how to reference a User in the userbase while maintaining the
+    secutiry and consistency?
+    """
     def __init__ (self):
         self.users = np.array([], dtype=User)
 
     def logIn(self, username, pwd):
-        ## authentication here
-        #account = username in self.users.ids
-        account = False
-        if not account:
+        users_id = list(filter(lambda u: u.authenticate(username, pwd), self.users))
+        user = users_id[0] if len(users_id) > 0 else None 
+        if not user:
             id = uuid1()
-            np.append(self.users, User(id.int, "wave", "styled"))
-        else:
-            users_id = list(filter(lambda u: u.authenticate(username, pwd), self.users))
-            return users_id is not None
+            user = User(id.int, "wave", "styled")
+            np.append(self.users, user)
+        return user
+
+    
