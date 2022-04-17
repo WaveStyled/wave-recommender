@@ -13,36 +13,25 @@ import uvicorn
 import sys
 from fastapi import FastAPI
 from typing import Optional, List
-from Wardrobe import Wardrobe
-from Recommender import Recommender
+from User import User
 from os.path import exists
 
 # Creates app and wardobe instance
 app = FastAPI()
-wardrobe = Wardrobe()
-recommender = Recommender()
-need_train = True
+user = User()
 
 @app.on_event("startup")
 async def startup_event():
-    path = f'wavestyled.h3'
-    if exists(path):
-        recommender.load_model(path)
-        need_train = False
+    pass
 
 @app.on_event("shutdown")
 def shutdown_event():
-    recommender.savemodel('') # how would we know which model to close?
+    #recommender.savemodel('') # how would we know which model to close?
+    pass
 
-
-@app.put("/start")
-async def boot():
-    if(wardrobe.logged_in == False):
-        wardrobe.from_csv("./good_matts_wardrobe.csv")
-        wardrobe.logIn()
-        return 200
-    else:
-        return 404
+@app.put("/start/")
+async def boot(userid: Optional[int] = None):
+    user.wardrobe_init("./good_matts_wardrobe.csv")
 
 """
 Function: 
@@ -65,7 +54,7 @@ async def update(item: dict, userid: Optional[int] = None):
     success = 200 if item else 404
     
     # Adds item to wardrobe object
-    wardrobe.addItem(item.get("data"))
+    user.addWDItem(item.get("data"))
     
     # returns success message(200 or 404)
     return success
@@ -87,7 +76,7 @@ Inputs:
 Outputs:
  - 200 or 404 to Node server
 """
-@app.put("/delete/")
+@app.delete("/delete/")
 async def delete(item: dict, userid: Optional[int] = None):
     # If item exists 200, otherwise 404
     success = 200 if item else 404
@@ -111,26 +100,27 @@ Outputs:
 """
 @app.post("/create_recommender/")
 async def recommend(userid : Optional[int] = None):
-    recommender.fromDB()
+    user.load_model()
+    user.update_preferences(True)
     return 200
 
 @app.get("/recommender_train/")
 async def recommend(userid : Optional[int] = None):
     #print(wardrobe)
-    recommender.addColors(wardrobe)
-    recommender.encode_colors()
+    #recommender.addColors(wardrobe)
+    #recommender.encode_colors()
     #recommender.normalize()
-    print("Done -1")
+    #print("Done -1")
     # training
-    train, labels = recommender.create_train()
-    print("Done")
-    recommender.buildModel()
-    recommender.train(train,labels)
+    #train, labels = recommender.create_train()
+    #print("Done")
+    #recommender.buildModel()
+    #recommender.train(train,labels)
     return 200
 
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
 async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
-    fits = recommender.recommend(occasion=occasion, weather=weather, wd=wardrobe)
+    fits = user.get_recommendations(occasion=occasion, weather=weather)
     return fits
 
 """
@@ -146,14 +136,13 @@ Inputs:
 Outputs:
  - List of different randomly generated outfits(pieceIDs)
 """
-@app.put("/calibrate_start/{num_calibrate}")
+@app.put("/calibrate_start/")
 async def calibrate_start(num_calibrate: int):
-    fits = wardrobe.getRandomFit(num_calibrate)
-    return fits
+    return user.begin_calibration(num_calibrate)
 
 @app.put("/calibrate_end/")
 async def calibrate_end(metadata: list):
-    wardrobe.outfitToDB(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
+    user.end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
 """
@@ -172,7 +161,7 @@ Outputs:
 @app.get("/getwardrobe")
 async def getwardrobe():
     # Returns dict str()
-    return {"data": str(wardrobe)}
+    return {"data": str(user.getWD())}
 
 """
 Function: 

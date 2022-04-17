@@ -270,6 +270,9 @@ class Recommender(Wardrobe):
     def load_model(self,name):
         self.model = load_model(name+".h5")
 
+    def dedup(self):
+        self.dt.drop_duplicates(in_place=True)
+
 
 def main():
     w = Wardrobe()
@@ -277,6 +280,7 @@ def main():
 
     ## setup
     r = Recommender()
+    r.buildModel()
     load = int(input("load model? (1/0): "))
     if load == 1:
         r.load_model('wavestyled')
@@ -288,8 +292,6 @@ def main():
 
         # training
         train, labels = r.create_train()
-        print(train.shape, train)
-        r.buildModel()
         r.train(train,labels)
 
     #recommending

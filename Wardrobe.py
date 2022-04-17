@@ -472,6 +472,7 @@ class Wardrobe:
                         conn.commit() ## save transactions into the database
             except Exception as error:
                 print(error)
+                print(outfits)
             finally:
                 if conn:
                     conn.close()   ## close the connection
@@ -510,6 +511,8 @@ class Wardrobe:
         finally:
             if conn:
                 conn.close()   ## close the connection
+
+        self.dt.drop_duplicates(inplace=True)
 
     def logIn(self):
         self.logged_in = True

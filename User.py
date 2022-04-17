@@ -5,41 +5,66 @@ from uuid import uuid1
 import numpy as np
 
 class User:
-
-    def __init__ (self, id, username, pwd):
+    def __init__ (self, id=999):
         self.id = id
         self.wd = Wardrobe()
         self.rec = Recommender()
-        self.username = username
-        self.pwd = pwd
+        self.loaded = False
 
-    def authenticate(self, username, pwd):
-        if self.username == username and self.pwd == pwd:
-            return self.id
-        else:
-            None
+    def authenticate(self, id):
+        return self.id == id
 
-    def addWD(self, item):
-        pass
+    def addWDItem(self, item): # item - tuple
+        self.wd.addItem(item)
+    
+    def removeWDItem(self, primary_key):
+        self.wd.deleteItem(primary_key)
     
     def getWD(self):
         return self.wd
 
-    def train(self):
-        path = f'{self.id}.h3'
-        if exists(path):
-            self.rec.load_model(path)
-        else:
-            pass #train logic here
+    def begin_calibration(self, num):
+        return self.wd.getRandomFit(num)
 
-    def recommend(self):
-        pass
+    def end_calibration(self, ratings, outfits, attrs):
+        self.wd.outfitToDB(outfits=outfits, ratings=ratings, attrs=attrs)
+
+    def wardrobe_init(self, path='./good_matts_wardrobe.csv'):
+        self.wd.from_csv(path)
+
+    ## MODEL STUFF
+    def load_model(self):
+        self.loaded = exists(f'{self.id}.h5')
+        if not self.loaded:
+            self.rec.buildModel()
+        else:
+            self.rec.load_model(f'{self.id}')
+    
+    def train_model(self):
+        train, labels = self.rec.create_train()
+        self.rec.train(train, labels)
+    
+    def update_preferences(self, new_data = True):
+        if new_data:
+            self.rec.from_csv('./outfits.csv')
+        self.rec.fromDB()
+        self.rec.addColors(self.wd)
+        self.rec.encode_colors()
+        self.train_model()
+
+    def get_recommendations(self, occasion, weather, buffer=5):
+        return self.rec.recommend(occasion=occasion, weather=weather, wd=self.wd, buffer=buffer)
+        
+# duplicate? want to put these in DB
 
     def save_progress(self):
-        self.rec.save_model(f'{self.id}.h3')
+        self.rec.save_model(f'{self.id}.h5')
 
     def getID(self):
         return self.id
+    
+    def getModel(self):
+        return self.rec
 
 
 class UserBase:
