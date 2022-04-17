@@ -243,7 +243,7 @@ class Recommender(Wardrobe):
         good_fits = fits[ind].tolist()
         final_fits = []
         for fit in good_fits:
-            repeats = self.dt.loc[(df['hat']== fit[0]) & (df['shirt']== fit[1]) & (df['sweater']== fit[2]) & (df['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)]
+            repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].tolist()
             if(len(repeats)  == 0):
                 final_fits.append(fit)
         return final_fits
