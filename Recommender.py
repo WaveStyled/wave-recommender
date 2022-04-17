@@ -240,8 +240,14 @@ class Recommender(Wardrobe):
         if -1 in fit: return None
         ## partial sort to buffer elements
         ind = np.argpartition(probs, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
-        return fits[ind].tolist()
-
+        good_fits = fits[ind].tolist()
+        final_fits = []
+        for fit in good_fits:
+            repeats = self.dt.loc[(df['hat']== fit[0]) & (df['shirt']== fit[1]) & (df['sweater']== fit[2]) & (df['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)]
+            if(len(repeats)  == 0):
+                final_fits.append(fit)
+        return final_fits
+    
     def buildModel(self):
         self.model = Sequential()
         self.model.add(Flatten(input_shape=(3,7)))
