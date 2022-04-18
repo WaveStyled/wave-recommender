@@ -3,6 +3,7 @@ from Recommender import Recommender
 from os.path import exists
 from uuid import uuid1
 import numpy as np
+from hashlib import md5
 
 class User:
     def __init__ (self, id=999):
@@ -45,9 +46,9 @@ class User:
         self.rec.train(train, labels)
     
     def update_preferences(self, new_data = True, train_again=False):
-        if new_data:
+        if not new_data:
             self.rec.from_csv('./outfits.csv')
-        self.rec.fromDB()
+        self.rec.fromDB()  ## need another parameter to dictate which DB to draw from
         self.rec.addColors(self.wd)
         self.rec.encode_colors()
         if train_again:
@@ -56,8 +57,6 @@ class User:
     def get_recommendations(self, occasion, weather, buffer=5):
         return self.rec.recommend(occasion=occasion, weather=weather, wd=self.wd, buffer=buffer)
         
-# duplicate? want to put these in DB
-
     def save_progress(self):
         self.rec.save_model(f'{self.id}.h5')
 
@@ -67,23 +66,30 @@ class User:
     def getModel(self):
         return self.rec
 
+    def __str__ (self):
+        return f'ID: {self.id} \n Wardrobe:\n{str(self.wd)} \n Recommender:\n{str(self.rec)}'
 
 class UserBase:
-
-    """
-    to think about --> how to reference a User in the userbase while maintaining the
-    secutiry and consistency?
-    """
     def __init__ (self):
-        self.users = np.array([], dtype=User)
+        self.users = dict()
 
-    def logIn(self, username, pwd):
-        users_id = list(filter(lambda u: u.authenticate(username, pwd), self.users))
-        user = users_id[0] if len(users_id) > 0 else None 
-        if not user:
-            id = uuid1()
-            user = User(id.int, "wave", "styled")
-            np.append(self.users, user)
-        return user
+    def __gen_key (self, id):
+        input_str = f'userid{id}'
+        return str(md5(input_str.encode('utf8')).hexdigest())
+
+    def add_new_user(self, id):
+        new_user = User(id)
+        self.users.update({self.__gen_key(id): new_user})
+        return new_user
+
+    def get_user(self, id):
+        user = self.users.get(self.__gen_key(id))
+        return user if user else self.add_new_user(id)
+    
+    def get_userbase(self):
+        return self.users.values()
+    
+    def __str__ (self):
+        return "\n\n".join([str(u) for u in self.users.values()])
 
     

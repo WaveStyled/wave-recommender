@@ -4,46 +4,61 @@ import cv2 as cv
 import numpy as np
 
 def main():
-    bootup()
+    bootup(1000)
     print("WAVESTYLED UI SIMULATION")
     choice = int(input("Start? (1/0): "))
     if choice == 1:
         choice2 = int(input("Calibrate Model? (1/0): "))
         if choice2 == 1:
-            calibrate()
-        train_recommender()
+            calibrate(1000)
+        train_recommender(1000)
         oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
         we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
-        while True:          
-            print("RECOMMENDATIONS:")
-            occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
-            weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
-            quit = 0
-            fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}') ## display fits
+        #while True:          
+        print("RECOMMENDATIONS:")
+        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+        quit = 0
+        fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 1000) ## display fits
+        for f in fits:
+            print(f)
+
+    bootup(47)
+    print("WAVESTYLED UI SIMULATION ROUND 2 MFFFFFFF")
+    choice = int(input("Start? (1/0): "))
+    if choice == 1:
+        choice2 = int(input("Calibrate Model? (1/0): "))
+        if choice2 == 1:
+            calibrate(47)
+        train_recommender(47)
+        oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
+        we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
+        #while True:          
+        print("RECOMMENDATIONS:")
+        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+        quit = 0
+        fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 47) ## display fits
+        if fits:
             for f in fits:
-                print(f)
-                #displayFit(outfit=[f], conditions=[oc_mappings[occasion], we_mappings[weather]], path='../matts_wardrobe_jpeg')
-                #like = int(input("Like (1) Dislike (0) Choose Fit for the Day (2)  Quit (3): "))
-                
-                #if like == 3:
-                #    quit = 1
-                #    break
-           # if quit: break
-            # ping model and retrain.. maybe retrain in batches?
+                print(f)   
+
+    print("NOW LETS SEE IF THIS WORKED")
+    r = requests.get("http://localhost:5001/user_info/")
+    print(r.json()['data'])
     
-    ## save models , data, and ensure storage is persistent
             
 
 # Calls server startup, loads the wardrobe csv
-def bootup():
+def bootup(u = 1000):
     # call bootup link
-    requests.put("http://localhost:5001/start/?userid=1000")
+    requests.put(f"http://localhost:5001/start/?userid={u}")
 
-def calibrate():
+def calibrate(u = 1000):
     print("How many calibration outfits would you like to see?\n")
     print("Note: More you calibrate, more the model will understand your likes:\n")
     num_calibrate = int(input('Number: '))
-    r = requests.put("http://localhost:5001/calibrate_start/?num_calibrate="+str(num_calibrate))
+    r = requests.put(f"http://localhost:5001/calibrate_start/?num_calibrate={num_calibrate}&userid={u}")
     fits, conditions = r.json()
 
     # display images
@@ -52,14 +67,14 @@ def calibrate():
     # print(ratings, fit, attr)
 
     # send ratings back
-    requests.put("http://localhost:5001/calibrate_end/", json=[ratings, fit, attr])
+    requests.put(f"http://localhost:5001/calibrate_end/?userid={u}", json=[ratings, fit, attr])
 
-def train_recommender():
+def train_recommender(u = 1000):
     print("CALIBRATING RECOMMENDER MODEL...\n")
-    requests.post("http://localhost:5001/create_recommender/")
+    requests.post(f"http://localhost:5001/recommend_train/?userid={u}")
 
-def recommend(occasion, weather):
-    r = requests.get(f"http://localhost:5001/recommend/?occasion={occasion}&weather={weather}")
+def recommend(occasion, weather, u = 1000):
+    r = requests.get(f"http://localhost:5001/recommend/?userid={u}&occasion={occasion}&weather={weather}")
     return r.json()
 
 

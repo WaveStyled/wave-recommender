@@ -136,7 +136,7 @@ class Recommender(Wardrobe):
             outfit = [of.hat, of.shirt, of.sweater, of.jacket, of.bottom_layer, of.shoes, of.misc]
             colors = [of.color_hat, of.color_shirt, of.color_sweater, of.color_jacket, of.color_bottom_layer, of.color_shoes, of.color_misc]
             relevant = [of.occasion, of.weather, 0, 0, 0, 0, 0]
-            liked = [1 if (of.liked or of.liked) == 't' else 0]
+            liked = [1 if (of.liked or of.liked == 't') else 0]
             train.append([outfit,colors,relevant])
             labels.append(liked)
         return np.array(train), np.array(labels)
@@ -176,6 +176,7 @@ class Recommender(Wardrobe):
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
         print("Training ...")
+        print(X_train, y_train)
         history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")

@@ -8,17 +8,16 @@
 ##########
 
 # Library imports
-from cv2 import fitEllipse
 import uvicorn
 import sys
 from fastapi import FastAPI
 from typing import Optional, List
-from User import User
-from os.path import exists
+from User import UserBase
+
 
 # Creates app and wardobe instance
 app = FastAPI()
-user = User()
+USERBASE = UserBase()
 
 @app.on_event("startup")
 async def startup_event():
@@ -30,7 +29,8 @@ def shutdown_event():
     pass
 
 @app.put("/start/")
-async def boot(userid: Optional[int] = None):
+async def boot(userid: Optional[int] = 999):
+    user = USERBASE.get_user(userid)
     user.wardrobe_init("./good_matts_wardrobe.csv")
 
 """
@@ -49,11 +49,11 @@ Returns:
  - 200 or 404 to the Node server
 """
 @app.put("/add")
-async def update(item: dict, userid: Optional[int] = None):
+async def update(item: dict, userid: Optional[int] = 999):
     # If item exists 200, otherwise 404
     success = 200 if item else 404
     
-    # Adds item to wardrobe object
+    user = USERBASE.get_user(userid)
     user.addWDItem(item.get("data"))
     
     # returns success message(200 or 404)
@@ -81,7 +81,11 @@ async def delete(item: dict, userid: Optional[int] = None):
     # If item exists 200, otherwise 404
     success = 200 if item else 404
     #TODO: Logic for deleteing item
+    ##
     
+    # IF an item is deleted, all outfits that have it must also be removed
+    
+    ##
     # returns success message(200 or 404)
     return success
 
@@ -98,16 +102,16 @@ Inputs:
 Outputs:
  - List of different outfits(pieceIDs)
 """
-@app.post("/create_recommender/")
-async def recommend(userid : Optional[int] = None):
+@app.post("/recommend_train/")
+async def recommend(retrain : bool = True, userid : Optional[int] = 999):
+    user = USERBASE.get_user(userid)
     user.load_model()
-    user.update_preferences(True) # when buffer set train_again to True
+    user.update_preferences(new_data=True, train_again=True) # when buffer set train_again to True
     return 200
 
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
-async def recommend(occasion : str, weather : str, userid : Optional[int] = None):
-    fits = user.get_recommendations(occasion=occasion, weather=weather)
-    return fits
+async def recommend(occasion : str, weather : str, userid : Optional[int] = 999):
+    return USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
 
 """
 Function: 
@@ -123,12 +127,12 @@ Outputs:
  - List of different randomly generated outfits(pieceIDs)
 """
 @app.put("/calibrate_start/")
-async def calibrate_start(num_calibrate: int):
-    return user.begin_calibration(num_calibrate)
+async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
+    return USERBASE.get_user(userid).begin_calibration(num_calibrate)
 
 @app.put("/calibrate_end/")
-async def calibrate_end(metadata: list):
-    user.end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
+async def calibrate_end(metadata: list, userid : Optional[int] = 999):
+    USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
 """
@@ -145,9 +149,13 @@ Outputs:
  - Dictionary of wardrobe
 """
 @app.get("/getwardrobe")
-async def getwardrobe():
+async def getwardrobe(userid : Optional[int] = 999):
     # Returns dict str()
-    return {"data": str(user.getWD())}
+    return {"data": str(USERBASE.get_user(userid).getWD())}
+
+@app.get("/user_info/")
+async def getinfo():
+    return {"data": str(USERBASE)}
 
 """
 Function: 
