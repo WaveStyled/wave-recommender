@@ -171,7 +171,6 @@ class Recommender(Wardrobe):
 
     def train(self,X,y):
         # Split into training and validation set
-        # prints
         #print(X, y)
         x_set, X_test, y_set, y_test = train_test_split(X, y, test_size=0.2, random_state=144)
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)

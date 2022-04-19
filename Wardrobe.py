@@ -96,7 +96,7 @@ class Wardrobe:
     - Ensures that only 1 item is returned as primary keys are unique
     """
     def getItem(self, primary_key, ind=False):     
-        item = self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=ind)  
+        item = self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=ind)
         return item[0] if item else None
     
     """
