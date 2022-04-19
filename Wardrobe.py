@@ -40,6 +40,7 @@ class Wardrobe:
                     ):
         self.logged_in = False
         self.dt = pd.DataFrame(columns=cols)
+        self.cols = cols
     
     """
     Function: 
@@ -464,9 +465,12 @@ class Wardrobe:
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
                                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
+                        
+                        res = np.empty(shape=(len(outfits), 11))
 
-                        for i in range(len(outfits)):
-                            inputs = [pk] + outfits[i] + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
+                        for i,o in np.ndenumerate(outfits):  # optimized
+                            inputs = [pk] + o + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
+                            res[i] = inputs
                             curs.execute(insert_script, inputs)
                             pk+=1
                         conn.commit() ## save transactions into the database
@@ -476,6 +480,8 @@ class Wardrobe:
             finally:
                 if conn:
                     conn.close()   ## close the connection
+            
+            print(res)
 
     """
     Function: 
@@ -499,20 +505,20 @@ class Wardrobe:
                     port = PORT) as conn:
 
                 with conn.cursor() as curs:
-
                     curs.execute(f'SELECT * FROM {table}')
                     rows = curs.fetchall()
+
                     for r in rows:
                         self.addItem(r)
-                    
-                    conn.commit() ## save transactions into the database
+
         except Exception as error:
             print(error)
         finally:
             if conn:
                 conn.close()   ## close the connection
 
-        self.dt.drop_duplicates(inplace=True)
+        #cols = self.dt.columns.values.tolist()
+        #self.dt = pd.DataFrame(rows, columns=cols)
 
     def logIn(self):
         self.logged_in = True
