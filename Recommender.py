@@ -174,7 +174,7 @@ class Recommender(Wardrobe):
         #print(X, y)
         x_set, X_test, y_set, y_test = train_test_split(X, y, test_size=0.2, random_state=144)
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
-        #print(X_train, y_train)
+
         history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")
@@ -184,14 +184,14 @@ class Recommender(Wardrobe):
     def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
         prediction = buffer
         fit = None
-        probs = np.array([])
-        fits = np.empty(shape=(0,7), dtype=np.int16)
+        probs2 = np.full(max_tries, 0, dtype=np.float64)
+        fits = []
         metadata = [Wardrobe.oc_mappings[occasion], Wardrobe.we_mappings[weather],0,0,0,0,0]
         
         while prediction and max_tries:
             max_tries-=1
             fit = wd.gen_random(occasion, weather)  # here we have to check if outfit hasnt been given before (could do it in gen random)
-            if -1 in fit: continue
+            if -1 in fit or fit in fits: continue
             colors = []
             for f in fit:
                 item = wd.getItem(f)
@@ -206,17 +206,20 @@ class Recommender(Wardrobe):
             pred = self.model.predict(to_predict)
             prediction -= np.argmax(pred)
 
-            probs = np.append(probs, [pred[0][1]])
-            fits = np.concatenate((fits, [fit]))
+            probs2[probs2.shape[0] - max_tries - 1] = pred[0][1]
+            fits.append(fit)
 
         if -1 in fit: return None
         ## partial sort to buffer elements
-        ind = np.argpartition(probs, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
-        good_fits = fits[ind].tolist()
+        buffer = len(probs2) if len(probs2) < buffer else buffer
+        ind = np.argpartition(probs2, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
+        nump_fits = np.array(fits)
+        good_fits = nump_fits[ind].tolist()
+        
         final_fits = []
         for fit in good_fits:
             repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].to_numpy().tolist()
-            if(len(repeats)  == 0):
+            if (len(repeats) == 0):
                 final_fits.append(fit)
         return final_fits
     
