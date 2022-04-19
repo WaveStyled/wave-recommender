@@ -11,7 +11,7 @@
 # Note: Tensorflow is large, so expect slow installation and slow running of programs
 # ANY RUN of this program should take around 15-20 seconds to run
 ##########
-from numpy import np
+import numpy as np
 from Wardrobe import Wardrobe
 # import tensorflow as tf
 
@@ -172,9 +172,10 @@ class Recommender(Wardrobe):
     def train(self,X,y):
         # Split into training and validation set
         # prints
+        print(X, y)
         x_set, X_test, y_set, y_test = train_test_split(X, y, test_size=0.2, random_state=144)
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
-
+        print(X_train, y_train)
         history = self.model.fit(X_train, y_train, epochs=50, validation_data=(X_val, y_val)) # batch size?
         
         print("Evaluation ...")
