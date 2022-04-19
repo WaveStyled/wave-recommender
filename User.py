@@ -32,6 +32,7 @@ class User:
 
     def wardrobe_init(self, path='./good_matts_wardrobe.csv'):
         self.wd.from_csv(path)
+        return True
 
     ## MODEL STUFF
     def load_model(self):

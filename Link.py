@@ -31,7 +31,10 @@ def shutdown_event():
 @app.put("/start/")
 async def boot(userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
-    user.wardrobe_init("./good_matts_wardrobe.csv")
+    if(user.wardrobe_init("./good_matts_wardrobe.csv")==True):
+        return 200
+    else:
+        return 404
 
 """
 Function: 
@@ -50,13 +53,10 @@ Returns:
 """
 @app.put("/add")
 async def update(item: dict, userid: Optional[int] = 999):
-    # If item exists 200, otherwise 404
-    success = 200 if item else 404
-    
+     
     user = USERBASE.get_user(userid)
-    user.addWDItem(item.get("data"))
-    
-    # returns success message(200 or 404)
+    # If item exists and is successfully added 200, otherwise 404
+    success = 200 if item and user.addWDItem(item.get("data")) else 404
     return success
 
 
@@ -103,7 +103,7 @@ Outputs:
  - List of different outfits(pieceIDs)
 """
 @app.post("/recommend_train/")
-async def recommend(retrain : bool = True, userid : Optional[int] = 999):
+async def recommend_train(retrain : bool = True, userid : Optional[int] = 999):
     user = USERBASE.get_user(userid)
     user.load_model()
     user.update_preferences(new_data=True, train_again=True) # when buffer set train_again to True
