@@ -457,7 +457,6 @@ class Wardrobe:
                         port = PORT) as conn:
 
                     with conn.cursor() as curs:
-                        
                         curs.execute('SELECT COUNT(*) FROM outfits')
                         pk = curs.fetchone()[0] + 1
 
@@ -466,23 +465,16 @@ class Wardrobe:
                                         "shoes, misc, occasion, weather, liked) "
                                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
                         
-                        res = np.empty(shape=(len(outfits), 11))
-
-                        for i,o in np.ndenumerate(outfits):  # optimized
-                            inputs = [pk] + o + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
-                            res[i] = inputs
+                        for i, outfit in enumerate(outfits):
+                            inputs = [pk+i] + outfit + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
                             curs.execute(insert_script, inputs)
-                            pk+=1
                         conn.commit() ## save transactions into the database
             except Exception as error:
                 print(error)
-                print(outfits)
             finally:
                 if conn:
                     conn.close()   ## close the connection
-            
-            print(res)
-
+        
     """
     Function: 
     Intializer from the DB
@@ -507,18 +499,13 @@ class Wardrobe:
                 with conn.cursor() as curs:
                     curs.execute(f'SELECT * FROM {table}')
                     rows = curs.fetchall()
-
-                    for r in rows:
-                        self.addItem(r)
-
+                    cols = self.dt.columns.values.tolist()
+                    self.dt = pd.DataFrame(rows, columns=cols)
         except Exception as error:
             print(error)
         finally:
             if conn:
                 conn.close()   ## close the connection
-
-        #cols = self.dt.columns.values.tolist()
-        #self.dt = pd.DataFrame(rows, columns=cols)
 
     def logIn(self):
         self.logged_in = True
