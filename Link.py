@@ -31,7 +31,7 @@ def shutdown_event():
 @app.put("/start/")
 async def boot(userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
-    if(user.wardrobe_init("./good_matts_wardrobe.csv")==True):
+    if user.wardrobe_init("./good_matts_wardrobe.csv"):
         return 200
     else:
         return 404
