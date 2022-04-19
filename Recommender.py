@@ -50,19 +50,6 @@ class Recommender(Wardrobe):
 
     """
     Function: 
-    Recommender Intializer from the Outfits DB
-
-    Desc: 
-    Initializes the Recommender dataframe from the Outfits datatable
-
-    Inputs: (optional) the info for the database connection
-    
-    Returns: None
-    """
-    
-
-    """
-    Function: 
     Recommender - Normalize
 
     Desc: 
@@ -122,7 +109,8 @@ class Recommender(Wardrobe):
     Desc: 
     Goes through each row in the dataframe and builds a training input for the model
     
-    TRAIN INPUT STRUCTURE: 14-element tuple with first 7 being normalized types and second 7 being the colors
+    TRAIN INPUT STRUCTURE: 3x7-dimensional array. First row being the outfit, second the color codes, third with 
+                            miscellaneous parameters (weather, occasion) and the unused elements set to 0
     
     Inputs: None
     
@@ -169,6 +157,19 @@ class Recommender(Wardrobe):
         self.dt['color_misc'] = self.dt.apply(
                 lambda row : wd.getItem(row.misc)[2] if wd.getItem(row.misc) else 'null', axis=1)
 
+    """
+    Function: 
+    Recommender - Train
+
+    Desc: 
+    Takes the given training data and labels and fits the model
+        
+    Inputs: 
+    - X --> training data of the model
+    - y --> labels (1 or 0) that correspond to each of the training data
+    
+    Returns: None
+    """
     def train(self,X,y):
         # Split into training and validation set
         #print(X, y)
@@ -181,6 +182,27 @@ class Recommender(Wardrobe):
         results = self.model.evaluate(X_test, y_test) #  batch_size=128 from the source
         print(f"test loss {results[0]}, test acc: {results[1]}")
 
+    """
+    Function: 
+    Recommender - recommend
+
+    Desc: 
+    Given the occasion and weather (both integers using the mapping in Wardrobe class)
+    the function will output at most "buffer" fits that the model thinks are most probabilistically
+    likely to be liked by the user. Will try as many times as the parameter max_tries.
+    
+    If no outfits match the 1 threshold, it will return "buffer" fits that have the
+    highest 1 label probability
+        
+    Inputs: 
+    - occasion STR --> occasion mapping specified in Wardrobe class
+    - weather STR --> weather mapping specified in Wardrobe class
+    - wd Wardobe --> wardrobe object that stores the user's items
+    - max_tries INT --> number of times the algorithm will attempt to find new fits
+    - buffer INT --> number of outfits desired
+    
+    Returns: List of fits that the model thinks the user will like
+    """
     def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
         prediction = buffer
         fit = None
@@ -223,6 +245,17 @@ class Recommender(Wardrobe):
                 final_fits.append(fit)
         return final_fits
     
+    """
+    Function: 
+    Recommender - build Model
+
+    Desc: 
+    Lays out Neural Network architecture for the model
+        
+    Inputs: None
+    
+    Returns: None
+    """
     def buildModel(self):
         self.model = Sequential()
         self.model.add(Flatten(input_shape=(3,7)))
@@ -235,13 +268,35 @@ class Recommender(Wardrobe):
               optimizer='adam',
               metrics=['accuracy'])
 
+    """
+    Function: 
+    Recommender - get Model
+
+    Desc: 
+    Returns the Recommender Model
+        
+    Inputs: None
+    
+    Returns: None
+    """
     def getModel(self):
         return self.model
 
+    """
+    Function: 
+    Recommender - get Recommender DataFrame
+
+    Desc: 
+    Returns the outfits dataframe stored in the Recommender objects
+    Includes all the outfits which should be consistent with the PSQL DB
+        
+    Inputs: None
+    
+    Returns: Pandas Dataframe storing the outfits table
+    """
     def getdf(self):
         return self.dt
 
-    
     """
     Function: 
     Recommender - Save Model
