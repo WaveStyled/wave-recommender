@@ -332,8 +332,8 @@ class Recommender(Wardrobe):
 
 def main():
     w = Wardrobe()
-    w.from_csv("./good_matts_wardrobe.csv")
-
+    w.from_csv("./csv_files/good_matts_wardrobe.csv")
+    print(w)
     ## setup
     r = Recommender()
     r.buildModel()
@@ -341,7 +341,7 @@ def main():
     if load == 1:
         r.load_model('wavestyled')
     else:
-        r.from_csv('./outfits.csv')
+        r.from_csv('./csv_files/outfits.csv')
         #r.fromDB()
         r.addColors(w)
         r.encode_colors()

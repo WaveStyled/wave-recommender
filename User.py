@@ -115,7 +115,7 @@ class User:
     
     Returns: Wardrobe object that stores the User's items
     """
-    def wardrobe_init(self, path='./good_matts_wardrobe.csv'):
+    def wardrobe_init(self, path='./csv_files/good_matts_wardrobe.csv'):
         self.wd.from_csv(path)
         return True
 
@@ -171,7 +171,7 @@ class User:
     """
     def update_preferences(self, new_data = True, train_again=False):
         if not new_data:
-            self.rec.from_csv('./outfits.csv')
+            self.rec.from_csv('./csv_files/outfits.csv')
         self.rec.fromDB()  ## need another parameter to dictate which DB to draw from
         self.rec.addColors(self.wd)
         self.rec.encode_colors()
