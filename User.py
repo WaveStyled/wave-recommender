@@ -47,6 +47,7 @@ class User:
     """
     def addWDItem(self, item): # item - tuple
         self.wd.addItem(item)
+        return True
     
     """
     Function: 

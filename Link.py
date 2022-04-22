@@ -32,9 +32,11 @@ def shutdown_event():
 async def boot(userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
     if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
+        print(user.getWD())
         return 200
     else:
         return 404
+    
 
 """
 Function: 
@@ -56,7 +58,7 @@ async def update(item: dict, userid: Optional[int] = 999):
      
     user = USERBASE.get_user(userid)
     # If item exists and is successfully added 200, otherwise 404
-    success = 200 if item and user.addWDItem(item.get("data")) else 404
+    success = 200 if (item is not None and user.addWDItem(item.get("data"))) else 404
     return success
 
 
@@ -148,7 +150,7 @@ Inputs:
 Outputs:
  - Dictionary of wardrobe
 """
-@app.get("/getwardrobe")
+@app.get("/getwardrobe/")
 async def getwardrobe(userid : Optional[int] = 999):
     # Returns dict str()
     return {"data": str(USERBASE.get_user(userid).getWD())}
