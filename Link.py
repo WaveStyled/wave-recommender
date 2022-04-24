@@ -55,7 +55,6 @@ Returns:
 """
 @app.put("/add")
 async def update(item: dict, userid: Optional[int] = 999):
-     
     user = USERBASE.get_user(userid)
     # If item exists and is successfully added 200, otherwise 404
     success = 200 if (item is not None and user.addWDItem(item.get("data"))) else 404
@@ -82,13 +81,10 @@ Outputs:
 async def delete(item: dict, userid: Optional[int] = None):
     # If item exists 200, otherwise 404
     success = 200 if item else 404
-    #TODO: Logic for deleteing item
-    ##
-    
-    # IF an item is deleted, all outfits that have it must also be removed
-    
-    ##
-    # returns success message(200 or 404)
+
+    user = USERBASE.get_user(userid)
+    # If item exists and is successfully added 200, otherwise 404
+    success = 200 if (item is not None and user.removeWDItem(item.get("data"))) else 404
     return success
 
 """

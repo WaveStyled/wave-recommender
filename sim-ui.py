@@ -4,6 +4,10 @@ import cv2 as cv
 import numpy as np
 
 def main():
+
+
+
+
     bootup(1000)
     print("WAVESTYLED UI SIMULATION")
     choice = int(input("Start? (1/0): "))
@@ -77,6 +81,13 @@ def recommend(occasion, weather, u = 1000):
     r = requests.get(f"http://localhost:5001/recommend/?userid={u}&occasion={occasion}&weather={weather}")
     return r.json()
 
+
+#def getColorName(R,G,B):
+#    colors = pd.DataFrame()
+#    df = colors[["R", "G", "B"]]
+#    dist = lambda r,g,b : abs(R - r) + abs(B - b) + abs(G - g)
+#    distances = np.array([dist(color.R, color.G, color.B) for color in df.itertuples()])
+#    return colors.iloc[np.argmin(distances), 'color_name']
 
 def displayFit(outfit, conditions, path):
     ratings = []
