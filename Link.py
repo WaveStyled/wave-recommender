@@ -79,13 +79,9 @@ Outputs:
 """
 @app.delete("/delete/")
 async def delete(item: dict, userid: Optional[int] = None):
-    # If item exists 200, otherwise 404
-    success = 200 if item else 404
-
     user = USERBASE.get_user(userid)
-    # If item exists and is successfully added 200, otherwise 404
-    success = 200 if (item is not None and user.removeWDItem(item.get("data"))) else 404
-    return success
+    user.removeWDItem(item.get("PK"))
+    return 200
 
 """
 Function: 

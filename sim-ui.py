@@ -4,48 +4,45 @@ import cv2 as cv
 import numpy as np
 
 def main():
-
-
-
-
     bootup(1000)
     print("WAVESTYLED UI SIMULATION")
-    choice = int(input("Start? (1/0): "))
-    if choice == 1:
-        choice2 = int(input("Calibrate Model? (1/0): "))
-        if choice2 == 1:
-            calibrate(1000)
-        train_recommender(1000)
-        oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
-        we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
+    # choice = int(input("Start? (1/0): "))
+    # #if choice == 1:
+    # #    calibrate(1000)
+    r = requests.delete("http://localhost:5001/delete/?userid=1000", json={"PK": 150})
+    print(r.text)
+        
+        #train_recommender(1000)
+        #oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
+        #we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
         #while True:          
-        print("RECOMMENDATIONS:")
-        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
-        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
-        quit = 0
-        fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 1000) ## display fits
-        for f in fits:
-            print(f)
+        #print("RECOMMENDATIONS:")
+        #occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+        #weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+        #quit = 0
+        #fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 1000) ## display fits
+        #for f in fits:
+        #    print(f)
 
-    bootup(47)
-    print("WAVESTYLED UI SIMULATION ROUND 2 MFFFFFFF")
-    choice = int(input("Start? (1/0): "))
-    if choice == 1:
-        choice2 = int(input("Calibrate Model? (1/0): "))
-        if choice2 == 1:
-            calibrate(47)
-        train_recommender(47)
-        oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
-        we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
-        #while True:          
-        print("RECOMMENDATIONS:")
-        occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
-        weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
-        quit = 0
-        fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 47) ## display fits
-        if fits:
-            for f in fits:
-                print(f)   
+    # bootup(47)
+    # print("WAVESTYLED UI SIMULATION ROUND 2 MFFFFFFF")
+    # choice = int(input("Start? (1/0): "))
+    # if choice == 1:
+    #     choice2 = int(input("Calibrate Model? (1/0): "))
+    #     if choice2 == 1:
+    #         calibrate(47)
+    #     train_recommender(47)
+    #     oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
+    #     we_mappings = ["we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical"]
+    #     #while True:          
+    #     print("RECOMMENDATIONS:")
+    #     occasion = int(input("What occasion? (formal (0), semi_formal (1), casual (2), workout (3), outdoors (4), comfy (5) ): "))
+    #     weather = int(input("What occasion? (cold (0), hot (1), rainy (2), snowy (3), typical (4) ): "))
+    #     quit = 0
+    #     fits = recommend(f'{oc_mappings[occasion]}', f'{we_mappings[weather]}', 47) ## display fits
+    #     if fits:
+    #         for f in fits:
+    #             print(f)   
 
     print("NOW LETS SEE IF THIS WORKED")
     r = requests.get("http://localhost:5001/user_info/")
