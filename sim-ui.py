@@ -9,8 +9,8 @@ def main():
     # choice = int(input("Start? (1/0): "))
     # #if choice == 1:
     # #    calibrate(1000)
-    r = requests.delete("http://localhost:5001/delete/?userid=1000", json={"PK": 150})
-    print(r.text)
+    r = requests.delete("http://localhost:5000/delete/1000/1")
+    #print(r.text)
         
         #train_recommender(1000)
         #oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)

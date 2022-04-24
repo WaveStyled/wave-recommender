@@ -32,7 +32,7 @@ def shutdown_event():
 async def boot(userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
     if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
-        print(user.getWD())
+        #print(user.getWD())
         return 200
     else:
         return 404
@@ -78,9 +78,9 @@ Outputs:
  - 200 or 404 to Node server
 """
 @app.delete("/delete/")
-async def delete(item: dict, userid: Optional[int] = None):
+async def delete(id: int, userid: Optional[int] = None):
     user = USERBASE.get_user(userid)
-    user.removeWDItem(item.get("PK"))
+    user.removeWDItem(id)
     return 200
 
 """
