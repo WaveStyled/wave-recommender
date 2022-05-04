@@ -120,7 +120,7 @@ Inputs:
 Outputs:
  - List of different randomly generated outfits(pieceIDs)
 """
-@app.put("/calibrate_start/")
+@app.put("/calibrate_start")
 async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
     return USERBASE.get_user(userid).begin_calibration(num_calibrate)
 
