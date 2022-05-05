@@ -34,7 +34,7 @@ class Wardrobe:
     
     Returns: None
     """
-    def __init__ (self, cols=['pieceid', "type", "color", "recent_date_worn", "times_worn", 
+    def __init__ (self, cols=['pieceid', "color", "type", "date_added", "times_worn", 
             "rating", "oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors",
             "oc_comfy", "we_cold", "we_hot", "we_rainy", "we_snowy", "we_typical", "dirty"]
                     ):
@@ -134,6 +134,7 @@ class Wardrobe:
         item = self.getItem(primary_key=primary_key, ind=True)
         if item:
             self.dt.drop([item[0]], axis=0, inplace=True)
+            self.dt.reset_index(drop=True, inplace=True)
 
     """
     Function: 

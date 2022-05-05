@@ -78,7 +78,7 @@ Outputs:
  - 200 or 404 to Node server
 """
 @app.delete("/delete/")
-async def delete(id: int, userid: Optional[int] = None):
+async def delete(id: int, userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
     user.removeWDItem(id)
     return 200
@@ -182,3 +182,4 @@ async def killServer():
 if __name__ == '__main__':
     model = None
     uvicorn.run(app, host='127.0.0.1', port=5001)
+

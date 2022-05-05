@@ -4,13 +4,15 @@ import cv2 as cv
 import numpy as np
 
 def main():
-    bootup(1000)
+    #bootup(1000)
     print("WAVESTYLED UI SIMULATION")
     # choice = int(input("Start? (1/0): "))
     # #if choice == 1:
     # #    calibrate(1000)
-    r = requests.delete("http://localhost:5000/delete/1000/1")
-    #print(r.text)
+
+    #bootup(123)
+    #r = requests.get("http://localhost:5000/wardrobe/123/")
+    #print(r.json())
         
         #train_recommender(1000)
         #oc_mappings = ["oc_formal", "oc_semi_formal", "oc_casual", "oc_workout", "oc_outdoors", "oc_comfy"]  ## maps occasion to integer (id)
