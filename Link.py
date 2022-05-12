@@ -123,11 +123,14 @@ Outputs:
 @app.put("/calibrate_start/")
 async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
     user = USERBASE.get_user(userid)
+    
     fits = user.begin_calibration(num_calibrate)
+    print(fits)
     return fits
 
-@app.put("/calibrate_end/")
-async def calibrate_end(metadata: list, userid : Optional[int] = 999):
+@app.put("/calibrate_end")
+async def calibrate_end(data: dict, userid : Optional[int] = 999):
+    metadata = data['data']
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
