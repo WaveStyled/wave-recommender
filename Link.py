@@ -31,11 +31,12 @@ def shutdown_event():
 @app.put("/start/")
 async def boot(userid: Optional[int] = 999):
     user = USERBASE.get_user(userid)
-    if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
-        #print(user.getWD())
-        return 200
-    else:
-        return 404
+    return 200
+    # if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
+    #     #print(user.getWD())
+    #     return 200
+    # else:
+    #     return 404
     
 
 """
@@ -123,14 +124,13 @@ Outputs:
 @app.put("/calibrate_start/")
 async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
     user = USERBASE.get_user(userid)
-    
     fits = user.begin_calibration(num_calibrate)
-    print(fits)
     return fits
 
 @app.put("/calibrate_end")
 async def calibrate_end(data: dict, userid : Optional[int] = 999):
     metadata = data['data']
+    print(metadata)
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 

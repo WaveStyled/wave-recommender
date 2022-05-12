@@ -461,6 +461,8 @@ class Wardrobe:
                         curs.execute('SELECT COUNT(*) FROM outfits')
                         pk = curs.fetchone()[0] + 1
 
+                        print("DATABASE CONNECTED")
+
                         insert_script = ("INSERT INTO outfits " 
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
@@ -468,6 +470,7 @@ class Wardrobe:
                         
                         for i, outfit in enumerate(outfits):
                             inputs = [pk+i] + outfit + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
+                            print(inputs)
                             curs.execute(insert_script, inputs)
                         conn.commit() ## save transactions into the database
             except Exception as error:

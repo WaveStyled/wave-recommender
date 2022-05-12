@@ -103,6 +103,9 @@ class User:
     Returns: None
     """
     def end_calibration(self, ratings, outfits, attrs):
+        print("ratings:", ratings)
+        print("outfits:", outfits)
+        print("attrs:", attrs)
         self.wd.outfitToDB(outfits=outfits, ratings=ratings, attrs=attrs)
 
     """
