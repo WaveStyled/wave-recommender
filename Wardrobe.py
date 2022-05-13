@@ -203,7 +203,8 @@ class Wardrobe:
     The 'piece_id' of the item generated, -1 if no items exist in that category
     """
     def gen(self, occasion, weather, ends):
-        x = self.dt.loc[(self.dt["type"].str.endswith(ends)) & (self.dt[occasion] == 1) & (self.dt[weather] == 1) ]
+        clean_wardrobe = self.dt[self.dt['dirty'] == False]
+        x = clean_wardrobe.loc[(clean_wardrobe["type"].str.endswith(ends)) & (clean_wardrobe[occasion] == 1) & (clean_wardrobe[weather] == 1) ]
         if (len(x.index)==0):
             return -1
         chosen = x.sample()
