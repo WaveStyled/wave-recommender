@@ -243,6 +243,7 @@ class Recommender(Wardrobe):
             ## partial sort to buffer elements
             buffer = len(probs2) if len(probs2) < buffer else buffer
             ind = np.argpartition(probs2, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
+            ind = ind[ind < len(fits)]
             nump_fits = np.array(fits)
             good_fits = nump_fits[ind].tolist()
         
