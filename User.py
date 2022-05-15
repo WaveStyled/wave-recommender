@@ -10,6 +10,7 @@ from Wardrobe import Wardrobe
 from Recommender import Recommender
 from os.path import exists
 from hashlib import md5
+from datetime import date
 
 class User:
     
@@ -29,6 +30,7 @@ class User:
         self.wd = Wardrobe()
         self.rec = Recommender()
         self.loaded = False
+        self.ootd = {}
 
     def authenticate(self, id):
         return self.id == id
@@ -184,6 +186,24 @@ class User:
             self.train_model()
 
     """
+    Function:
+    User - choose OOTD
+
+    Inputs the outfit for the day using 
+    """
+    def chooseOOTD(self, fit,  weather, occasion):
+        today = date.today()
+        # mm/dd/y
+        d = today.strftime("%m/%d/%y")
+        self.ootd[(d,weather,occasion)] = fit
+
+    def getOOTD(self, weather, occasion, d=""):
+        if d == "":
+            today = date.today()
+            # mm/dd/y
+            d = today.strftime("%m/%d/%y")
+        return self.ootd[(d, weather, occasion)]
+    """
     Function: 
     User - Get Recommendation Fits
 
@@ -257,7 +277,7 @@ class User:
         return self.wd
 
     def __str__ (self): ## TO STRING
-        return f'ID: {self.id} \n Wardrobe:\n{str(self.wd)} \n Recommender:\n{str(self.rec)}'
+        return f'ID: {self.id} {self.ootd} \n Wardrobe:\n{str(self.wd)} \n Recommender:\n{str(self.rec)}'
 
 ###########
 

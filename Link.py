@@ -134,6 +134,24 @@ async def calibrate_end(data: dict, userid : Optional[int] = 999):
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
+@app.put("/OOTD/")
+async def add_ootd(data : dict, userid : Optional[int] = 999):
+    outfit = data['outfit']
+    weather = data['weather']
+    occasion = data['occasion']
+    user = USERBASE.get_user(userid)
+    user.chooseOOTD(outfit, weather, occasion)
+    return 200
+
+@app.get("/OOTD/")
+async def get_ootd(data : dict, userid : Optional[int] = 999):
+    weather = data['weather']
+    occasion = data['occasion']
+    date = data['date']
+    user = USERBASE.get_user(userid)
+    return user.getOOTD(weather, occasion, date)
+
+
 """
 Function: 
 Python server - get_wardrobe
@@ -155,6 +173,7 @@ async def getwardrobe(userid : Optional[int] = 999):
 @app.get("/user_info/")
 async def getinfo():
     return {"data": str(USERBASE)}
+
 
 """
 Function: 
