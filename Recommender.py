@@ -47,6 +47,7 @@ class Recommender(Wardrobe):
         super().__init__(['outfit_id','hat','shirt','sweater','jacket','bottom_layer',
                  'shoes','misc','times_worn','recent_date_worn','fit_score','occasion','weather','liked'])
         self.model = None
+        self.trained = False
 
     """
     Function: 
@@ -172,7 +173,7 @@ class Recommender(Wardrobe):
     """
     def train(self,X,y):
         # Split into training and validation set
-        #print(X, y)
+        print(X, y)
         x_set, X_test, y_set, y_test = train_test_split(X, y, test_size=0.2, random_state=144)
         X_train, X_val, y_train, y_val = train_test_split(x_set, y_set, test_size=0.25, random_state=144)
 
@@ -181,6 +182,7 @@ class Recommender(Wardrobe):
         print("Evaluation ...")
         results = self.model.evaluate(X_test, y_test) #  batch_size=128 from the source
         print(f"test loss {results[0]}, test acc: {results[1]}")
+        self.trained = True
 
     """
     Function: 
@@ -204,6 +206,7 @@ class Recommender(Wardrobe):
     Returns: List of fits that the model thinks the user will like
     """
     def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
+        print("TRAINED") if self.trained else print("UNTRAINED")
         prediction = buffer
         fit = None
         probs2 = np.full(max_tries, 0, dtype=np.float64)
@@ -214,35 +217,41 @@ class Recommender(Wardrobe):
             max_tries-=1
             fit = wd.gen_random(occasion, weather)  # here we have to check if outfit hasnt been given before (could do it in gen random)
             if -1 in fit or fit in fits: continue
-            colors = []
-            for f in fit:
-                item = wd.getItem(f)
-                color = item[2] if item else item
-                color_ind = Recommender.mappings.get(color) if color else Recommender.mappings.get('null')
-                if not color_ind:
-                    color_ind = len(Recommender.mappings) + 1
-                    update_color = color if color else 'null'
-                    Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
-                colors.append(color_ind)
-            to_predict = np.array([[fit, colors, metadata]])
-            pred = self.model.predict(to_predict)
-            prediction -= np.argmax(pred)
+            if self.trained:
+                colors = []
+                for f in fit:
+                    item = wd.getItem(f)
+                    color = item[2] if item else item
+                    color_ind = Recommender.mappings.get(color) if color else Recommender.mappings.get('null')
+                    if not color_ind:
+                        color_ind = len(Recommender.mappings) + 1
+                        update_color = color if color else 'null'
+                        Recommender.mappings.update({update_color : len(Recommender.mappings) + 1})
+                    colors.append(color_ind)
+                to_predict = np.array([[fit, colors, metadata]])
+                pred = self.model.predict(to_predict)
+                prediction -= np.argmax(pred)
 
-            probs2[probs2.shape[0] - max_tries - 1] = pred[0][1]
-            fits.append(fit)
+                probs2[probs2.shape[0] - max_tries - 1] = pred[0][1]
+                fits.append(fit)
+            else:
+                fits.append(fit)
 
-        if -1 in fit: return None
-        ## partial sort to buffer elements
-        buffer = len(probs2) if len(probs2) < buffer else buffer
-        ind = np.argpartition(probs2, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
-        nump_fits = np.array(fits)
-        good_fits = nump_fits[ind].tolist()
+        if -1 in fit: return []
+
+        if self.trained:
+            ## partial sort to buffer elements
+            buffer = len(probs2) if len(probs2) < buffer else buffer
+            ind = np.argpartition(probs2, -1 * buffer)[-1 * buffer:] # get the indices with highest 4 probabilities
+            nump_fits = np.array(fits)
+            good_fits = nump_fits[ind].tolist()
         
         final_fits = []
         for fit in good_fits:
             repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].to_numpy().tolist()
             if (len(repeats) == 0):
                 final_fits.append(fit)
+
         return final_fits
     
     """

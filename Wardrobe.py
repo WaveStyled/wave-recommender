@@ -471,7 +471,6 @@ class Wardrobe:
                         
                         for i, outfit in enumerate(outfits):
                             inputs = [pk+i] + outfit + [Wardrobe.oc_mappings.get(attrs[i][0]), Wardrobe.we_mappings.get(attrs[i][1])] + [bool(ratings[i])]
-                            print(inputs)
                             curs.execute(insert_script, inputs)
                         conn.commit() ## save transactions into the database
             except Exception as error:
@@ -504,8 +503,9 @@ class Wardrobe:
                 with conn.cursor() as curs:
                     curs.execute(f'SELECT * FROM {table}')
                     rows = curs.fetchall()
-                    cols = self.dt.columns.values.tolist()
+                    cols = self.dt.columns.values.tolist()[:len(rows[0] if rows[0] else 14)]
                     self.dt = pd.DataFrame(rows, columns=cols)
+
         except Exception as error:
             print(error)
         finally:

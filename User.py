@@ -177,6 +177,7 @@ class User:
         if not new_data:
             self.rec.from_csv('./csv_files/outfits.csv')
         self.rec.fromDB()  ## need another parameter to dictate which DB to draw from
+        print(self.rec)
         self.rec.addColors(self.wd)
         self.rec.encode_colors()
         if train_again:
