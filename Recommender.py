@@ -239,6 +239,7 @@ class Recommender(Wardrobe):
 
         if -1 in fit: return []
 
+        good_fits = []
         if self.trained:
             ## partial sort to buffer elements
             buffer = len(probs2) if len(probs2) < buffer else buffer
