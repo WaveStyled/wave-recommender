@@ -76,6 +76,7 @@ class Wardrobe:
     """
     def addItem(self, clothing_item):
         self.dt.loc[self.dt.shape[0]] = clothing_item
+
     
     """
     Function: 
@@ -98,7 +99,41 @@ class Wardrobe:
     def getItem(self, primary_key, ind=False):     
         item = self.dt.loc[self.dt['pieceid'] == primary_key].to_records(index=ind)
         return item[0] if item else None
+
     
+    """
+    Function:
+    Wardobe - update Item
+
+    Desc:
+    Updates the given item in its respective place in the wardrobe
+
+    Inputs:
+    - item --> item tuple to be update
+
+    Returns:
+    None
+
+    It finds the pieceid of the desired item using the item tuple and merges the two
+    in the dataframe
+    """
+    def updateItem(self, item):
+        if isinstance(item, list):
+            val = self.dt.loc[self.dt['pieceid'] == item[0]].to_records(index=True)
+            if len(val) > 0:
+                withoutindex = list(val[0])[1:]
+                index = val[0][0]
+                updated = []
+                for old, new in zip(withoutindex, item):
+                    if old is not None and new is None:
+                        updated.append(old)
+                    else:
+                        updated.append(new)
+                # print(withoutindex)
+                # print(item)
+                # print(updated)
+                self.dt.iloc[index] = updated
+
     """
     Function: 
     Wardrobe - Get Item as Item Object -- DEPRECATED

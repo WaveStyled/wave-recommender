@@ -70,6 +70,23 @@ class User:
     def removeWDItem(self, primary_key):
         self.wd.deleteItem(primary_key)
 
+
+
+    """
+    Function:
+    User - update Item in wardrobe
+
+    Desc:
+    Given the item, updates the corresponding item in the User's wardrobe
+
+    Inputs:
+    - item LIST --> list representation of the item to be updated
+    
+    Returns: None
+    """    
+    def updateWDItem(self, item):
+        self.wd.updateItem(item)
+
     ## CALIBRATION
     """
     Function: 
@@ -189,7 +206,15 @@ class User:
     Function:
     User - choose OOTD
 
-    Inputs the outfit for the day using 
+    Desc:
+    Sets the OOTD (outfit of the day) for the specified weather and occasion
+
+    Input:
+    - fit LIST --> fit to be the OOTD
+    - weather STR --> weather of the OOTD (in the form 'we_XXX')
+    - occasion STR --> occasion of the OOTD (in the form 'oc_XXX')
+
+    Returns: None
     """
     def chooseOOTD(self, fit,  weather, occasion):
         today = date.today()
@@ -197,12 +222,32 @@ class User:
         d = today.strftime("%m/%d/%y")
         self.ootd[(d,weather,occasion)] = fit
 
+    """
+    Function:
+    User - get OOTD 
+
+    Desc: 
+    Returns the OOTD for a specific weather, occasion, and date
+
+    Input:
+    - weather STR --> weather of the OOTD (in the form 'we_XXX')
+    - occasion STR --> occasion of the OOTD (in the form 'oc_XXX')
+    - d STR --> Date string for the desired Date
+            - Note if "" (empty string) is passed, current date is assumed
+
+    Returns:
+    - the fit for the desired date, weather, occasion
+     - If the specified occasion, weather, date combo doesnt exist then returns
+    empty list
+    """
     def getOOTD(self, weather, occasion, d=""):
         if d == "":
             today = date.today()
             # mm/dd/y
             d = today.strftime("%m/%d/%y")
-        return self.ootd[(d, weather, occasion)]
+        
+        return self.ootd.get((d, weather, occasion), [])
+        
     """
     Function: 
     User - Get Recommendation Fits

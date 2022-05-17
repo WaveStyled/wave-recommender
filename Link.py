@@ -8,6 +8,7 @@
 ##########
 
 # Library imports
+from pydantic import DataclassTypeError
 import uvicorn
 import sys
 from fastapi import FastAPI
@@ -49,7 +50,7 @@ new item to pythons item object.
 
 Inputs:
  - Dictionary of the new items attributes
- - UserID(default none) : Not implemented fully
+ - UserID(default 999) : Id of the user
 
 Returns:
  - 200 or 404 to the Node server
@@ -60,6 +61,28 @@ async def update(item: dict, userid: Optional[int] = 999):
     # If item exists and is successfully added 200, otherwise 404
     success = 200 if (item is not None and user.addWDItem(item.get("data"))) else 404
     return success
+
+"""
+Function:
+Python server -- change Item
+
+Desc:
+Takes in an item representation and updates that corresponding item in the Python
+Dataframe (if it exists). Handles Wardrobe updating on the Python end
+
+Inputs: 
+- Dictionary containing a list of the updated state of the item
+- UserID (default 999)
+
+Returns: 
+ - 200 (need to implement erorr handling)
+"""
+@app.post("/change/")
+async def change(data : dict, userid : Optional[int] = 999):
+    user = USERBASE.get_user(userid)
+    tochange = data['data']
+    user.updateWDItem(tochange)
+    return 200
 
 
 """
@@ -86,16 +109,18 @@ async def delete(id: int, userid: Optional[int] = 999):
 
 """
 Function: 
-Python server - recommend: INCOMPLETE
+Python server - recommen train
 
 Desc: 
-When a user wants to get an outfit, Node will ping the server to send some outfits back to the server in the form of PieceID's
+Loads the user's recommendation model and updates the model's
+predictions based on the new data
 
 Inputs:
- - Occasion, Weather
+ - retrain BOOL (Default True) --> whether the model should be retrained
+ - userid (Default 999) --> id of the User
 
 Outputs:
- - List of different outfits(pieceIDs)
+ - 200 if successful otherwise 404
 """
 @app.post("/recommend_train/")
 async def recommend_train(retrain : bool = True, userid : Optional[int] = 999):
@@ -104,6 +129,22 @@ async def recommend_train(retrain : bool = True, userid : Optional[int] = 999):
     user.update_preferences(new_data=True, train_again=True) # when buffer set train_again to True
     return 200
 
+"""
+Function:
+Python server - recomend
+
+Desc:
+For a given occasion and weather, generates recommendations for the specified
+user
+
+Inputs: (all query parameters)
+ - occasion STR --> the desired occasion
+ - weather STR --> the desired weather
+ - userid (Default 999) --> id of the User
+
+Returns:
+List of tuples that represent the recommended fits for the user
+"""
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
 async def recommend(occasion : str, weather : str, userid : Optional[int] = 999):
     return USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
@@ -127,6 +168,22 @@ async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
     fits = user.begin_calibration(num_calibrate)
     return fits
 
+"""
+Function:
+Python Server - End the calibrate phase
+
+Desc:
+Ends the calibration phase, which involves sending outfits to the Outfits DB
+and initializing the recommender/model
+
+Inputs: 
+ - data DICTIONARY --> holds the ratings, outfits, and occasion/weather tuples from the
+    calibration
+ - userid (Default 999) --> id of the User
+
+Returns:
+ - 200 if operation is successful otherwise 404
+"""
 @app.put("/calibrate_end")
 async def calibrate_end(data: dict, userid : Optional[int] = 999):
     metadata = data['data']
@@ -134,6 +191,21 @@ async def calibrate_end(data: dict, userid : Optional[int] = 999):
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
+"""
+Function: 
+Python Server -- set outfit of the day (OOTD)
+
+Desc:
+Sets the OOTD for the specified user
+
+Inputs:
+ - data DICTIONARY --> 'outfit' key contains the OOTD fit, 'weather' contains the weather,
+    'occasion' contains the occasion string, optional key 'date' for the date
+ - userid (Default 999) --> id of the User
+
+Returns
+ - 200 if no errors happen otherwise 404
+"""
 @app.put("/OOTD/")
 async def add_ootd(data : dict, userid : Optional[int] = 999):
     outfit = data['outfit']
@@ -143,6 +215,21 @@ async def add_ootd(data : dict, userid : Optional[int] = 999):
     user.chooseOOTD(outfit, weather, occasion)
     return 200
 
+
+"""
+Function:
+Python Server -- Get Outfit of the Day (OOTD)
+
+Desc:
+returns the OOTD fit for the desired user, weather, and occasion
+
+Inputs;
+ - data DICTIONARY --> holds the weather, occasion, date metadata
+ - UserID INT (default 999) --> id of the user
+
+Returns:
+ - LIST --> fit of the day (empty if none exists)
+"""
 @app.get("/OOTD/")
 async def get_ootd(data : dict, userid : Optional[int] = 999):
     weather = data['weather']
@@ -170,6 +257,18 @@ async def getwardrobe(userid : Optional[int] = 999):
     # Returns dict str()
     return {"data": str(USERBASE.get_user(userid).getWD())}
 
+"""
+Function:
+Python server - get user info
+
+Desc:
+Returns the wardrobe, OOTD, pieceids, outfit table of all the users
+in the USERBASE
+
+Inputs: None
+
+Returns: None
+"""
 @app.get("/user_info/")
 async def getinfo():
     return {"data": str(USERBASE)}
