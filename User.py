@@ -195,7 +195,7 @@ class User:
     def update_preferences(self, new_data = True, train_again=False):
         if not new_data:
             self.rec.from_csv('./csv_files/outfits.csv')
-        self.rec.fromDB()  ## need another parameter to dictate which DB to draw from
+        self.rec.fromDB(userid=self.id)  ## need another parameter to dictate which DB to draw from
         print(self.rec)
         self.rec.addColors(self.wd)
         self.rec.encode_colors()

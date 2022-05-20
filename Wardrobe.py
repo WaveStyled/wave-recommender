@@ -482,7 +482,7 @@ class Wardrobe:
     
     Returns: None
     """
-    def outfitToDB(self, outfits, ratings, attrs, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+    def outfitToDB(self, outfits, ratings, attrs, userid=123 ,HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         if len(outfits) == len(ratings) == len(attrs):
             conn = None
             try: 
@@ -494,12 +494,12 @@ class Wardrobe:
                         port = PORT) as conn:
 
                     with conn.cursor() as curs:
-                        curs.execute('SELECT COUNT(*) FROM outfits')
+                        curs.execute(f'SELECT COUNT(*) FROM outfits{userid}')
                         pk = curs.fetchone()[0] + 1
 
                         print("DATABASE CONNECTED")
 
-                        insert_script = ("INSERT INTO outfits " 
+                        insert_script = (f"INSERT INTO outfits{userid} " 
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
                                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
@@ -525,7 +525,7 @@ class Wardrobe:
     
     Returns: None
     """
-    def fromDB(self, table='outfits', HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+    def fromDB(self, table='outfits', userid=123, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         conn = None
         try: 
             with psqldb.connect(   ## open the connection
@@ -536,7 +536,7 @@ class Wardrobe:
                     port = PORT) as conn:
 
                 with conn.cursor() as curs:
-                    curs.execute(f'SELECT * FROM {table}')
+                    curs.execute(f'SELECT * FROM {table}{userid}')
                     rows = curs.fetchall()
                     cols = self.dt.columns.values.tolist()[:len(rows[0] if rows[0] else 14)]
                     self.dt = pd.DataFrame(rows, columns=cols)
