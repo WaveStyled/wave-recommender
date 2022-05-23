@@ -30,7 +30,7 @@ def shutdown_event():
     pass
 
 @app.put("/start/")
-async def boot(userid: Optional[int] = 999):
+async def boot(userid: Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     return 200
     # if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
@@ -56,7 +56,7 @@ Returns:
  - 200 or 404 to the Node server
 """
 @app.put("/add")
-async def update(item: dict, userid: Optional[int] = 999):
+async def update(item: dict, userid: Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     # If item exists and is successfully added 200, otherwise 404
     success = 200 if (item is not None and user.addWDItem(item.get("data"))) else 404
@@ -78,7 +78,7 @@ Returns:
  - 200 (need to implement erorr handling)
 """
 @app.post("/change/")
-async def change(data : dict, userid : Optional[int] = 999):
+async def change(data : dict, userid : Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     tochange = data['data']
     user.updateWDItem(tochange)
@@ -102,7 +102,7 @@ Outputs:
  - 200 or 404 to Node server
 """
 @app.delete("/delete/")
-async def delete(id: int, userid: Optional[int] = 999):
+async def delete(id: int, userid: Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     user.removeWDItem(id)
     return 200
@@ -123,7 +123,7 @@ Outputs:
  - 200 if successful otherwise 404
 """
 @app.post("/recommend_train/")
-async def recommend_train(retrain : bool = True, userid : Optional[int] = 999):
+async def recommend_train(retrain : bool = True, userid : Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     user.load_model()
     user.update_preferences(new_data=True, train_again=True) # when buffer set train_again to True
@@ -146,7 +146,7 @@ Returns:
 List of tuples that represent the recommended fits for the user
 """
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
-async def recommend(occasion : str, weather : str, userid : Optional[int] = 999):
+async def recommend(occasion : str, weather : str, userid : Optional[str] = "999"):
     return USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
 
 """
@@ -163,7 +163,7 @@ Outputs:
  - List of different randomly generated outfits(pieceIDs)
 """
 @app.put("/calibrate_start/")
-async def calibrate_start(num_calibrate: int, userid : Optional[int] = 999):
+async def calibrate_start(num_calibrate: int, userid : Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     fits = user.begin_calibration(num_calibrate)
     return fits
@@ -185,7 +185,7 @@ Returns:
  - 200 if operation is successful otherwise 404
 """
 @app.put("/calibrate_end")
-async def calibrate_end(data: dict, userid : Optional[int] = 999):
+async def calibrate_end(data: dict, userid : Optional[str] = "999"):
     metadata = data['data']
     print(metadata)
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
@@ -207,7 +207,7 @@ Returns
  - 200 if no errors happen otherwise 404
 """
 @app.put("/OOTD/")
-async def add_ootd(data : dict, userid : Optional[int] = 999):
+async def add_ootd(data : dict, userid : Optional[str] = "999"):
     outfit = data['outfit']
     weather = data['weather']
     occasion = data['occasion']
@@ -231,7 +231,7 @@ Returns:
  - LIST --> fit of the day (empty if none exists)
 """
 @app.get("/OOTD/")
-async def get_ootd(data : dict, userid : Optional[int] = 999):
+async def get_ootd(data : dict, userid : Optional[str] = "999"):
     weather = data['weather']
     occasion = data['occasion']
     date = data['date']
@@ -253,7 +253,7 @@ Outputs:
  - Dictionary of wardrobe
 """
 @app.get("/getwardrobe/")
-async def getwardrobe(userid : Optional[int] = 999):
+async def getwardrobe(userid : Optional[str] = "999"):
     # Returns dict str()
     return {"data": str(USERBASE.get_user(userid).getWD())}
 

@@ -494,12 +494,12 @@ class Wardrobe:
                         port = PORT) as conn:
 
                     with conn.cursor() as curs:
-                        curs.execute(f'SELECT COUNT(*) FROM outfits{userid}')
+                        curs.execute(f'SELECT COUNT(*) FROM outfits_{userid}')
                         pk = curs.fetchone()[0] + 1
 
                         print("DATABASE CONNECTED")
 
-                        insert_script = (f"INSERT INTO outfits{userid} " 
+                        insert_script = (f"INSERT INTO outfits_{userid} " 
                                         "(outfit_id, hat, shirt, sweater, jacket, bottom_layer, "
                                         "shoes, misc, occasion, weather, liked) "
                                         "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)")
@@ -536,7 +536,7 @@ class Wardrobe:
                     port = PORT) as conn:
 
                 with conn.cursor() as curs:
-                    curs.execute(f'SELECT * FROM {table}{userid}')
+                    curs.execute(f'SELECT * FROM {table}_{userid}')
                     rows = curs.fetchall()
                     cols = self.dt.columns.values.tolist()[:len(rows[0] if rows[0] else 14)]
                     self.dt = pd.DataFrame(rows, columns=cols)
