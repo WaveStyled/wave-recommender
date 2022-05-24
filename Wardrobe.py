@@ -525,7 +525,7 @@ class Wardrobe:
     
     Returns: None
     """
-    def fromDB(self, table='outfits', userid=123, HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
+    def fromDB(self, userid, table='outfits', HOSTNAME='localhost', DATABASE='wavestyled', USER='postgres', PASS='cse115', PORT=5432):
         conn = None
         try: 
             with psqldb.connect(   ## open the connection

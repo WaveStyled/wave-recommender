@@ -125,7 +125,7 @@ class User:
         print("ratings:", ratings)
         print("outfits:", outfits)
         print("attrs:", attrs)
-        self.wd.outfitToDB(outfits=outfits, ratings=ratings, attrs=attrs)
+        self.wd.outfitToDB(outfits=outfits, ratings=ratings, attrs=attrs, userid=self.id)
 
     """
     Function: 

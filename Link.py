@@ -184,10 +184,10 @@ Inputs:
 Returns:
  - 200 if operation is successful otherwise 404
 """
-@app.put("/calibrate_end")
+@app.put("/calibrate_end/")
 async def calibrate_end(data: dict, userid : Optional[str] = "999"):
     metadata = data['data']
-    print(metadata)
+    print(metadata, userid)
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
