@@ -246,7 +246,10 @@ class User:
             # mm/dd/y
             d = today.strftime("%m/%d/%y")
         
-        return self.ootd.get((d, weather, occasion), [])
+        ootd = self.ootd.get((d, weather, occasion), [])
+        if not len(ootd) and len(self.ootd.values()):
+            ootd = list(self.ootd.values())[-1]
+        return ootd
         
     """
     Function: 

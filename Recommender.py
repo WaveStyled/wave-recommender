@@ -247,7 +247,7 @@ class Recommender(Wardrobe):
             ind = ind[ind < len(fits)]
             nump_fits = np.array(fits)
             good_fits = nump_fits[ind].tolist()
-        
+
         final_fits = []
         for fit in good_fits:
             repeats = self.dt.loc[(self.dt['hat']== fit[0]) & (self.dt['shirt']== fit[1]) & (self.dt['sweater']== fit[2]) & (self.dt['jacket']== fit[3]) & (self.dt['bottom_layer']== fit[4]) & (self.dt['shoes']== fit[5]) & (self.dt['misc']== fit[6]) &(self.dt['liked']== 0)].to_numpy().tolist()

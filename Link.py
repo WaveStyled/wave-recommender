@@ -147,8 +147,9 @@ List of tuples that represent the recommended fits for the user
 """
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
 async def recommend(occasion : str, weather : str, userid : Optional[str] = "999"):
-    return USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
-
+    recommendations = USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
+    print(recommendations)
+    return recommendations
 """
 Function: 
 Python server - calibrate_start: COMPLETE
@@ -231,12 +232,15 @@ Returns:
  - LIST --> fit of the day (empty if none exists)
 """
 @app.get("/OOTD/")
-async def get_ootd(data : dict, userid : Optional[str] = "999"):
-    weather = data['weather']
-    occasion = data['occasion']
-    date = data['date']
+async def get_ootd(userid : Optional[str] = "999"):
+    data = {}
+    weather = data.get('weather', "")
+    occasion = data.get('occasion', "")
+    date = data.get('date', "")
     user = USERBASE.get_user(userid)
-    return user.getOOTD(weather, occasion, date)
+    ootd = user.getOOTD(weather, occasion, date)
+    print(ootd)
+    return ootd
 
 
 """
