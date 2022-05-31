@@ -200,6 +200,8 @@ class Recommender(Wardrobe):
     Returns: List of fits that the model thinks the user will like
     """
     def recommend(self, occasion, weather, wd, max_tries=20, buffer=5):  # use tf predict method
+        if occasion not in Wardrobe.oc_mappings or weather not in Wardrobe.we_mappings:
+            return None
         prediction = buffer
         fit = None
         probs2 = np.full(max_tries, 0, dtype=np.float64)
