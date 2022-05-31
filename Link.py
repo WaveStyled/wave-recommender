@@ -33,11 +33,6 @@ def shutdown_event():
 async def boot(userid: Optional[str] = "999"):
     user = USERBASE.get_user(userid)
     return 200
-    # if user.wardrobe_init("./csv_files/good_matts_wardrobe.csv"):
-    #     #print(user.getWD())
-    #     return 200
-    # else:
-    #     return 404
     
 
 """
@@ -148,8 +143,8 @@ List of tuples that represent the recommended fits for the user
 @app.get("/recommend/")  ## query parameters done in the link itself (see sim-ui recommend() for examples)
 async def recommend(occasion : str, weather : str, userid : Optional[str] = "999"):
     recommendations = USERBASE.get_user(userid).get_recommendations(occasion=occasion, weather=weather)
-    print(recommendations)
     return recommendations
+
 """
 Function: 
 Python server - calibrate_start: COMPLETE
@@ -188,7 +183,6 @@ Returns:
 @app.put("/calibrate_end/")
 async def calibrate_end(data: dict, userid : Optional[str] = "999"):
     metadata = data['data']
-    print(metadata, userid)
     USERBASE.get_user(userid).end_calibration(ratings=metadata[0],outfits=metadata[1],attrs=metadata[2])
     return 200
 
@@ -239,7 +233,6 @@ async def get_ootd(userid : Optional[str] = "999"):
     date = data.get('date', "")
     user = USERBASE.get_user(userid)
     ootd = user.getOOTD(weather, occasion, date)
-    print(ootd)
     return ootd
 
 
