@@ -14,6 +14,7 @@ from Wardrobe import Wardrobe as wd
 
 wardrobe = wd()
 
+# tests that the wardrobe object loads the csv properly
 def test_wardrobe_load():
     wardrobe.from_csv('./csv_files/good_matts_wardrobe.csv')
     assert 156 == len(wardrobe)

@@ -15,12 +15,12 @@ from User import User, UserBase
 user = User()
 userBase = UserBase()
 
-
+# tests users can be generated
 def test_user_load():
     user.wardrobe_init()
     assert len(user.getWD()) == 156
 
-
+# tests add, update, delete operations
 def test_user_wd_operations():
     toadd = (157, "TEST", "red", 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1)
     user.addWDItem(toadd)
@@ -40,14 +40,14 @@ def test_user_wd_operations():
     assert len(user.getWD()) == 156
     assert user.getWD().getItem(140) is None
 
-
+# tests that calibration generates valid fits
 def test_user_calibration():
     fits = user.begin_calibration(5)
 
     assert len(fits) <= 5
     assert all([len(fit) == 7 for fit in fits])
 
-
+# tests end calibrations add to the existing recommendation model
 def test_end_calibration():
     test_ratings = [1, 0, 1, 0]
     test_attr = [("oc_typical", "we_rainy"), ("oc_formal", "we_cold"),
@@ -56,9 +56,9 @@ def test_end_calibration():
                  [0, 0, 0, 0, 1, 4, 78], [145, 9, 0, 0, 80, 90, 4]]
 
     user.end_calibration(ratings=test_ratings, attrs=test_attr, outfits=test_fits)
-    oldrec = user.getModel()
+    oldrec = user.getWD().getdf()
     user.update_preferences()
-    newrec = user.getModel()
+    newrec = user.getWD().getdf()
 
     assert len(oldrec) == len(newrec) - 4
     
