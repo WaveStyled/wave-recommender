@@ -62,8 +62,16 @@ def test_wardrobe_gen():
     pieceids = wardrobe.getdf()['pieceid'].tolist()
     assert id in pieceids
 
-    wd = wd()
-    id = wardrobe.gen("blank", "test")
+    fail = wd()
+    id = fail.gen("blank", "test")
+    assert id == -1
+
+    fail = wd()
+    id = fail.gen("oc_formal", "test")
+    assert id == -1
+
+    fail = wd()
+    fail = fail.gen("blank", "test")
     assert id == -1
 
 
